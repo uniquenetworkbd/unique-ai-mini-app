@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unique AI Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #0088cc; --bg: #f4f7f6; --card: #ffffff; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
+        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { padding: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
+        .card p { margin: 0; font-size: 13px; font-weight: 600; }
+        .ai-box { background: #e3f2fd; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--primary); }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #777; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Unique Network & Hacking Helpline</h2>
+        <p>আপনার ডিজিটাল নিরাপত্তার বিশ্বস্ত সঙ্গী</p>
+    </div>
+
+    <div class="container">
+        <div class="ai-box">
+            <h4><i class="fas fa-robot"></i> Ask Unique AI</h4>
+            <p>আপনার ইন্টারনেট বা সিকিউরিটি সমস্যা এখানে লিখুন...</p>
+            <input type="text" style="width: 85%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <button class="btn">জিজ্ঞাসা করুন</button>
+        </div>
+
+        <div class="grid">
+            <div class="card"><i class="fas fa-rss"></i><p>AI News Feed</p></div>
+            <div class="card"><i class="fas fa-tachometer-alt"></i><p>Speed Test</p></div>
+            <div class="card"><i class="fas fa-user-shield"></i><p>Hacking Helpline</p></div>
+            <div class="card"><i class="fas fa-wifi"></i><p>Router Guide</p></div>
+            <div class="card"><i class="fas fa-file-invoice-dollar"></i><p>Bill Calculator</p></div>
+            <div class="card"><i class="fas fa-shield-virus"></i><p>Fraud Checker</p></div>
+            <div class="card"><i class="fas fa-lightbulb"></i><p>Daily Safety Tip</p></div>
+            <div class="card"><i class="fas fa-comments"></i><p>User Forum</p></div>
+            <div class="card"><i class="fas fa-search-location"></i><p>Coverage Map</p></div>
+            <div class="card"><i class="fas fa-key"></i><p>Pass Generator</p></div>
+            <div class="card"><i class="fas fa-headset"></i><p>Live Chat</p></div>
+            <div class="card"><i class="fas fa-network-wired"></i><p>IP Checker</p></div>
+            <div class="card"><i class="fas fa-box-open"></i><p>Internet Plans</p></div>
+            <div class="card"><i class="fas fa-ticket-alt"></i><p>Support Ticket</p></div>
+            <div class="card"><i class="fas fa-gift"></i><p>Refer & Earn</p></div>
+            <div class="card"><i class="fas fa-user-circle"></i><p>My Profile</p></div>
+            <div class="card"><i class="fas fa-exclamation-triangle"></i><p>System Status</p></div>
+            <div class="card"><i class="fas fa-moon"></i><p>Dark Mode</p></div>
+            <div class="card"><i class="fas fa-search"></i><p>Search Archive</p></div>
+            <div class="card"><i class="fas fa-video"></i><p>Security Videos</p></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2026 Unique Network | Powered by Gemini AI
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // অ্যাপটিকে পূর্ণ স্ক্রিনে খুলবে
+    </script>
+</body>
+  </html>
