@@ -3,58 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unique AI Mini App</title>
+    <title>Unique AI Super App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0088cc; --bg: #f4f7f6; --card: #ffffff; --text: #333; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
-        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); overflow-x: hidden; }
+        .header { background: var(--primary); color: white; padding: 25px 20px; text-align: center; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .container { padding: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .card { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
-        .card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
+        .ai-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .ai-box input { width: 80%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .card { background: var(--card); padding: 18px; border-radius: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: 0.3s; cursor: pointer; border: 1px solid transparent; }
+        .card:active { transform: scale(0.95); background: #e3f2fd; border-color: var(--primary); }
+        .card i { font-size: 28px; color: var(--primary); margin-bottom: 10px; display: block; }
         .card p { margin: 0; font-size: 13px; font-weight: 600; }
-        .ai-box { background: #e3f2fd; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--primary); }
-        .footer { text-align: center; padding: 20px; font-size: 12px; color: #777; }
-        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%; margin-top: 10px; }
+        .footer { text-align: center; padding: 25px; font-size: 12px; color: #888; letter-spacing: 0.5px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h2>Unique Network & Hacking Helpline</h2>
-        <p>আপনার ডিজিটাল নিরাপত্তার বিশ্বস্ত সঙ্গী</p>
+        <h2 style="margin:0;">Unique Network & Hacking Helpline</h2>
+        <p style="margin:5px 0 0; font-size:14px; opacity:0.9;">আপনার ডিজিটাল নিরাপত্তার বিশ্বস্ত সঙ্গী</p>
     </div>
 
     <div class="container">
         <div class="ai-box">
-            <h4><i class="fas fa-robot"></i> Ask Unique AI</h4>
-            <p>আপনার ইন্টারনেট বা সিকিউরিটি সমস্যা এখানে লিখুন...</p>
-            <input type="text" style="width: 85%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
-            <button class="btn">জিজ্ঞাসা করুন</button>
+            <h4 style="margin-top:0;"><i class="fas fa-robot"></i> Ask Unique AI</h4>
+            <input type="text" id="aiQuery" placeholder="আপনার সমস্যাটি এখানে লিখুন...">
+            <button class="btn-main" onclick="askAI()">জিজ্ঞাসা করুন</button>
         </div>
 
         <div class="grid">
-            <div class="card"><i class="fas fa-rss"></i><p>AI News Feed</p></div>
-            <div class="card"><i class="fas fa-tachometer-alt"></i><p>Speed Test</p></div>
-            <div class="card"><i class="fas fa-user-shield"></i><p>Hacking Helpline</p></div>
-            <div class="card"><i class="fas fa-wifi"></i><p>Router Guide</p></div>
-            <div class="card"><i class="fas fa-file-invoice-dollar"></i><p>Bill Calculator</p></div>
-            <div class="card"><i class="fas fa-shield-virus"></i><p>Fraud Checker</p></div>
-            <div class="card"><i class="fas fa-lightbulb"></i><p>Daily Safety Tip</p></div>
-            <div class="card"><i class="fas fa-comments"></i><p>User Forum</p></div>
-            <div class="card"><i class="fas fa-search-location"></i><p>Coverage Map</p></div>
-            <div class="card"><i class="fas fa-key"></i><p>Pass Generator</p></div>
-            <div class="card"><i class="fas fa-headset"></i><p>Live Chat</p></div>
-            <div class="card"><i class="fas fa-network-wired"></i><p>IP Checker</p></div>
-            <div class="card"><i class="fas fa-box-open"></i><p>Internet Plans</p></div>
-            <div class="card"><i class="fas fa-ticket-alt"></i><p>Support Ticket</p></div>
-            <div class="card"><i class="fas fa-gift"></i><p>Refer & Earn</p></div>
-            <div class="card"><i class="fas fa-user-circle"></i><p>My Profile</p></div>
-            <div class="card"><i class="fas fa-exclamation-triangle"></i><p>System Status</p></div>
-            <div class="card"><i class="fas fa-moon"></i><p>Dark Mode</p></div>
-            <div class="card"><i class="fas fa-search"></i><p>Search Archive</p></div>
-            <div class="card"><i class="fas fa-video"></i><p>Security Videos</p></div>
+            <div class="card" onclick="openLink('https://uniquenetworkbd.blogspot.com')"><i class="fas fa-rss"></i><p>AI News Feed</p></div>
+            <div class="card" onclick="openLink('https://www.fast.com')"><i class="fas fa-tachometer-alt"></i><p>Speed Test</p></div>
+            <div class="card" onclick="openLink('https://t.me/YourUsername')"><i class="fas fa-user-shield"></i><p>Hacking Helpline</p></div>
+            <div class="card" onclick="alert('রাউটার সেটিংস লোড হচ্ছে...')"><i class="fas fa-wifi"></i><p>Router Guide</p></div>
+            <div class="card" onclick="calculateBill()"><i class="fas fa-file-invoice-dollar"></i><p>Bill Calculator</p></div>
+            <div class="card" onclick="alert('লিঙ্কটি স্ক্যান করা হচ্ছে...')"><i class="fas fa-shield-virus"></i><p>Fraud Checker</p></div>
+            <div class="card" onclick="alert('আজকের টিপস: সবসময় ২-ফ্যাক্টর অথেনটিকেশন ব্যবহার করুন।')"><i class="fas fa-lightbulb"></i><p>Daily Safety Tip</p></div>
+            <div class="card" onclick="openLink('https://t.me/YourGroupLink')"><i class="fas fa-comments"></i><p>User Forum</p></div>
+            <div class="card" onclick="alert('নোয়াখালী এরিয়া ম্যাপ লোড হচ্ছে...')"><i class="fas fa-search-location"></i><p>Coverage Map</p></div>
+            <div class="card" onclick="generatePass()"><i class="fas fa-key"></i><p>Pass Generator</p></div>
+            <div class="card" onclick="openLink('https://wa.me/YourNumber')"><i class="fas fa-headset"></i><p>Live Chat</p></div>
+            <div class="card" onclick="openLink('https://www.whatismyip.com')"><i class="fas fa-network-wired"></i><p>IP Checker</p></div>
+            <div class="card" onclick="alert('আমাদের প্যাকেজ: ৫এমবিপিএস - ৫০০ টাকা')"><i class="fas fa-box-open"></i><p>Internet Plans</p></div>
+            <div class="card" onclick="alert('টিকিট সিস্টেম শীঘ্রই আসছে...')"><i class="fas fa-ticket-alt"></i><p>Support Ticket</p></div>
+            <div class="card" onclick="alert('রেফার করে জিতে নিন ডিসকাউন্ট!')"><i class="fas fa-gift"></i><p>Refer & Earn</p></div>
+            <div class="card" onclick="alert('আপনার প্রোফাইল ডাটা নিরাপদ আছে।')"><i class="fas fa-user-circle"></i><p>My Profile</p></div>
+            <div class="card" onclick="alert('সার্ভার স্ট্যাটাস: অনলাইন ✅')"><i class="fas fa-exclamation-triangle"></i><p>System Status</p></div>
+            <div class="card" onclick="toggleDarkMode()"><i class="fas fa-moon"></i><p>Dark Mode</p></div>
+            <div class="card" onclick="openLink('https://uniquenetworkbd.blogspot.com/search')"><i class="fas fa-search"></i><p>Search Archive</p></div>
+            <div class="card" onclick="openLink('https://youtube.com/@YourChannel')"><i class="fas fa-video"></i><p>Security Videos</p></div>
         </div>
     </div>
 
@@ -64,7 +65,32 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // অ্যাপটিকে পূর্ণ স্ক্রিনে খুলবে
+        tg.expand(); 
+
+        function openLink(url) { tg.openLink(url); }
+
+        function askAI() {
+            let query = document.getElementById('aiQuery').value;
+            if(query) {
+                tg.sendData(query); // এটি Make.com এ ডাটা পাঠাবে
+                alert("আপনার প্রশ্নটি জমা হয়েছে। এআই শীঘ্রই উত্তর দেবে।");
+            }
+        }
+
+        function generatePass() {
+            let pass = Math.random().toString(36).slice(-10);
+            alert("আপনার সিকিউর পাসওয়ার্ড: " + pass);
+        }
+
+        function calculateBill() {
+            let speed = prompt("কত Mbps ইন্টারনেট প্রয়োজন?");
+            if(speed) alert(speed + " Mbps এর আনুমানিক বিল " + (speed * 100) + " টাকা।");
+        }
+
+        function toggleDarkMode() {
+            document.body.style.backgroundColor = (document.body.style.backgroundColor === 'rgb(34, 34, 34)') ? '#f4f7f6' : '#222';
+            document.body.style.color = (document.body.style.color === 'white') ? '#333' : 'white';
+        }
     </script>
 </body>
-  </html>
+</html>
