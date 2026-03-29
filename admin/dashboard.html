@@ -3,111 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unique Network | Admin Control Panel</title>
+    <title>Unique Admin | Secure Control Panel</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* এই পেইজের জন্য কাস্টম এডমিন সিএসএস */
-        body { padding-bottom: 20px; } /* ড্যাশবোর্ডে Bottom Nav লাগবে না */
-        .admin-header {
-            background: #333;
-            color: white;
-            padding: 20px;
-            text-align: left;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        .admin-header h2 { margin: 0; font-size: 22px; }
-        .admin-header p { margin: 5px 0 0; font-size: 14px; opacity: 0.8; }
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border: 1px solid #eee;
-        }
-        .stat-card i { font-size: 35px; color: var(--primary); margin-bottom: 10px; }
-        .stat-card h3 { margin: 0; font-size: 24px; color: #333; }
-        .stat-card p { margin: 5px 0 0; font-size: 14px; color: #777; }
+        :root { --primary: #0088cc; --danger: #ff4d4d; --success: #2ecc71; }
+        body { background: #f4f7f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .login-box { background: white; padding: 30px; border-radius: 15px; width: 85%; max-width: 400px; text-align: center; }
+        .config-section { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background-color: var(--success); }
+        select, input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-save:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
-    <div class="admin-header">
-        <button class="logout-btn" onclick="logoutAdmin()">লগআউট</button>
-        <h2>Unique Admin Panel</h2>
-        <p>ইউনিক নেটওয়ার্ক কন্ট্রোল রুম | নোয়াখালী</p>
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <i class="fas fa-user-shield fa-3x" style="color: var(--primary);"></i>
+            <h3>Admin Access</h3>
+            <p style="font-size: 13px; color: #666;">আপনার GitHub Personal Access Token টি দিন</p>
+            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx">
+            <button class="btn-save" onclick="login()">সিস্টেমে প্রবেশ করুন</button>
+        </div>
     </div>
 
-    <div class="container">
+    <div class="header" style="background: #222; padding: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin:0; font-size: 18px;">Unique Admin Panel</h2>
+            <button onclick="logout()" style="background:var(--danger); border:none; color:white; padding:5px 10px; border-radius:5px;">Logout</button>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 20px;">
         
-        <h3 style="margin-top:0;"><i class="fas fa-chart-line"></i> কুইক স্ট্যাটাস</h3>
-        <div class="stat-grid">
-            <div class="stat-card">
-                <i class="fas fa-users"></i>
-                <h3>২৫০+</h3>
-                <p>মোট ইউজার</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-wifi"></i>
-                <h3>৩</h3>
-                <p>একটিভ POP</p>
-            </div>
+        <div class="config-section">
+            <h4><i class="fas fa-sliders-h"></i> কোর কনফিগারেশন</h4>
+            
+            <label>System Status</label>
+            <select id="sysStatus">
+                <option value="Online">Online ✅</option>
+                <option value="Maintenance">Maintenance 🛠️</option>
+                <option value="Offline">Offline ❌</option>
+            </select>
+
+            <label>Bot Soul (Personality)</label>
+            <select id="botSoul">
+                <option value="Professional">Professional 👔</option>
+                <option value="Friendly">Friendly 😊</option>
+                <option value="Aggressive">Cyber Security Expert 🛡️</option>
+            </select>
         </div>
 
-        <h3 style="margin-top:20px;"><i class="fas fa-cogs"></i> কন্ট্রোল টুলস</h3>
-        <div class="grid">
-            <div class="card stat-card" onclick="alert('ইউজার ডাটা লোড হচ্ছে...')"><i class="fas fa-user-edit"></i><p>ইউজার ম্যানেজমেন্ট</p></div>
-            <div class="card stat-card" onclick="alert('প্যাকেজ সেটিংস লোড হচ্ছে...')"><i class="fas fa-box-open"></i><p>প্যাকেজ সেটিংস</p></div>
-            <div class="card stat-card" onclick="alert('টেলিগ্রাম বট সেটিংস...')"><i class="fas fa-robot"></i><p>বট কনফিগার</p></div>
-            <div class="card stat-card" onclick="alert('বিল হিস্ট্রি লোড হচ্ছে...')"><i class="fas fa-receipt"></i><p>বিল হিস্ট্রি</p></div>
+        <div class="config-section">
+            <h4><i class="fas fa-bullhorn"></i> লাইভ এলার্ট ব্রডকাস্ট</h4>
+            <input type="text" id="alertText" placeholder="ইউজারদের জন্য কোনো জরুরি বার্তা...">
+            <p style="font-size: 11px; color: #888;">* এটি সেভ করলে সরাসরি অ্যাপের হোমপেইজে দেখাবে।</p>
         </div>
 
-        <div class="ai-box" style="margin-top: 20px; border-left: 6px solid #ffaa00;">
-            <h4 style="margin-top:0;"><i class="fas fa-broadcast-tower" style="color:#ffaa00;"></i> লাইভ এলার্ট</h4>
-            <input type="text" id="alertMsg" placeholder="এলার্ট মেসেজটি এখানে লিখুন...">
-            <button class="btn-main" style="background: #ffaa00; color: #333;" onclick="sendAlert()">সবার কাছে পাঠান</button>
-        </div>
+        <button class="btn-save" onclick="updateAllSettings()">
+            <i class="fas fa-sync-alt"></i> সেটিংস আপডেট করুন (Save to GitHub)
+        </button>
+
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
         tg.expand();
 
-        function logoutAdmin() {
-            // টেলিগ্রামের জন্য সেফ এক্সিট
-            tg.close();
-            // অথবা যদি আপনি হোম পেইজে যেতে চান
-            // window.location.href = "../index.html";
-        }
+        const CONFIG = {
+            username: "uniquenetworkbd",
+            repo: "unique-ai-mini-app",
+            branch: "main",
+            filename: "config.json"
+        };
 
-        function sendAlert() {
-            let msg = document.getElementById('alertMsg').value;
-            if(msg) {
-                // এটি Make.com এ ডাটা পাঠাবে বা আপনার বটের মাধ্যমে ব্রডকাস্ট করবে
-                tg.sendData(msg); 
-                alert("এলার্ট পাঠানো হচ্ছে। আপনার সাপোর্ট বটের মাধ্যমে চেক করুন।");
-                document.getElementById('alertMsg').value = '';
+        // লগইন ফাংশন
+        function login() {
+            const token = document.getElementById('tokenInput').value;
+            if (token.startsWith('ghp_')) {
+                sessionStorage.setItem('github_token', token);
+                document.getElementById('loginOverlay').style.display = 'none';
+                tg.HapticFeedback.notificationOccurred('success');
             } else {
-                alert("দয়া করে একটি মেসেজ লিখুন।");
+                alert("সঠিক GitHub Token প্রদান করুন!");
             }
         }
+
+        function logout() {
+            sessionStorage.removeItem('github_token');
+            location.reload();
+        }
+
+        // গিটহাব থেকে ডাটা সেভ করা
+        async function updateAllSettings() {
+            const token = sessionStorage.getItem('github_token');
+            if (!token) return alert("টোকেন পাওয়া যায়নি! পুনরায় লগইন করুন।");
+
+            const newSettings = {
+                system_status: document.getElementById('sysStatus').value,
+                bot_soul: document.getElementById('botSoul').value,
+                live_alert: document.getElementById('alertText').value,
+                last_updated: new Date().toLocaleString('bn-BD')
+            };
+
+            const url = `https://api.github.com/repos/${CONFIG.username}/${CONFIG.repo}/contents/${CONFIG.filename}`;
+            
+            tg.MainButton.setText("Updating GitHub...").show();
+
+            try {
+                // ১. SHA সংগ্রহ
+                const res = await fetch(url + `?ref=${CONFIG.branch}`, {
+                    headers: { "Authorization": `token ${token}` }
+                });
+                const fileData = await res.json();
+                
+                // ২. পুশ করা
+                const response = await fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: "Settings updated from Web Dashboard",
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(newSettings, null, 2)))),
+                        sha: fileData.sha,
+                        branch: CONFIG.branch
+                    })
+                });
+
+                if (response.ok) {
+                    tg.MainButton.hide();
+                    tg.showAlert("✅ সফলভাবে রিয়েল-টাইমে আপডেট হয়েছে!");
+                } else {
+                    throw new Error("API Error");
+                }
+            } catch (err) {
+                tg.MainButton.hide();
+                alert("ভুল হয়েছে! টোকেনের মেয়াদ বা রিপোজিটরি পারমিশন চেক করুন।");
+            }
+        }
+
+        // পেজ লোড হলে লগইন চেক
+        window.onload = () => {
+            if (sessionStorage.getItem('github_token')) {
+                document.getElementById('loginOverlay').style.display = 'none';
+            }
+        };
     </script>
 </body>
 </html>
