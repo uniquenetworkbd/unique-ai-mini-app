@@ -1,1 +1,120 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unique Network Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { padding-bottom: 20px; } /* ড্যাশবোর্ডে Bottom Nav লাগবে না */
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 350px;
+            margin: 100px auto;
+            text-align: center;
+        }
+        .login-box h3 { color: var(--primary); margin-top: 0; }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+        .login-box .btn-main { width: 100%; }
+        
+        #adminContent { display: none; } /* ডিফল্টভাবে লুকানো থাকবে */
+        .header { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+        .stat-card i { font-size: 35px; }
+        .stat-card p { font-size: 14px; margin-top: 5px; }
+        .logout-btn { background: #ff4d4d; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; float: right; }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen" class="container">
+        <div class="login-box">
+            <i class="fas fa-user-shield" style="font-size: 50px; color: var(--primary); margin-bottom: 15px;"></i>
+            <h3>এডমিন লগইন</h3>
+            <p style="font-size: 14px; color: #777; margin-bottom: 15px;">টেলিগ্রাম আইডি ও পাসওয়ার্ড দিন।</p>
+            <input type="text" id="adminTgId" placeholder="টেলিগ্রাম আইডি" value="" readonly>
+            <input type="password" id="adminPass" placeholder="গোপন পাসওয়ার্ড">
+            <button class="btn-main" onclick="checkAdmin()">প্রবেশ করুন</button>
+        </div>
+    </div>
+
+    <div id="adminContent">
+        <div class="header" style="text-align: left; padding: 20px;">
+            <button class="logout-btn" onclick="logoutAdmin()">লগআউট</button>
+            <h2 style="margin:0;">এডমিন কন্ট্রোল রুম</h2>
+            <p style="margin:5px 0 0; font-size:14px; opacity:0.9;">ইউনিক নেটওয়ার্ক | নোয়াখালী</p>
+        </div>
+
+        <div class="container">
+            <h3 style="margin-top:0;"><i class="fas fa-cogs"></i> কুইক অ্যাকশন</h3>
+            <div class="grid">
+                <div class="card stat-card" onclick="alert('ইউজার ম্যানেজমেন্ট শীঘ্রই আসছে...')"><i class="fas fa-users"></i><p>ইউজার ম্যানেজমেন্ট</p></div>
+                <div class="card stat-card" onclick="alert('ব্লগস্পট আপডেট হচ্ছে...')"><i class="fas fa-edit"></i><p>ব্লগ আপডেট</p></div>
+                <div class="card stat-card" onclick="alert('বট সেটিংস কনফিগার করা হচ্ছে...')"><i class="fas fa-robot"></i><p>বট সেটিংস</p></div>
+                <div class="card stat-card" onclick="alert('পেমেন্ট গেটওয়ে কানেক্ট করা হচ্ছে...')"><i class="fas fa-money-bill-wave"></i><p>বিল কালেকশন</p></div>
+            </div>
+
+            <div class="ai-box" style="margin-top: 20px;">
+                <h4 style="margin-top:0;"><i class="fas fa-broadcast-tower"></i> লাইভ এলার্ট</h4>
+                <input type="text" id="alertMsg" placeholder="এলার্ট মেসেজটি এখানে লিখুন...">
+                <button class="btn-main" style="background: #ffaa00; color: #333;" onclick="alert('এলার্ট পাঠানো হচ্ছে...')">সবার কাছে পাঠান</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // ১. অ্যাডভান্সড সিকিউরিটি কনফিগারেশন
+        const ADMIN_TG_ID = "Your_Telegram_Id"; // এখানে আপনার সঠিক টেলিগ্রাম আইডি দিন
+        const ADMIN_PASSWORD = "Your_Secret_Password"; // এখানে আপনার গোপন পাসওয়ার্ড দিন
+
+        // ২. অটো-অথেন্টিকেশন চেক (টেলিগ্রাম আইডি দিয়ে)
+        window.onload = function() {
+            let user = tg.initDataUnsafe.user;
+            if(user) {
+                document.getElementById('adminTgId').value = user.id;
+                // যদি টেলিগ্রাম আইডি মিলে যায়, তবে শুধু পাসওয়ার্ড বক্স দেখান
+                if(user.id != ADMIN_TG_ID) {
+                    alert("দয়া করে অনুমোদিত টেলিগ্রাম অ্যাকাউন্ট ব্যবহার করুন।");
+                    window.location.href = "../index.html"; // ব্যাক টু হোম
+                }
+            } else {
+                alert("এই পেজটি শুধু টেলিগ্রামের ভেতর থেকে ব্যবহার করা যাবে।");
+                window.location.href = "../index.html";
+            }
+        };
+
+        // ৩. পাসওয়ার্ড চেক ফাংশন
+        function checkAdmin() {
+            let pass = document.getElementById('adminPass').value;
+            if(pass === ADMIN_PASSWORD) {
+                // লগইন সফল
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+            } else {
+                alert("ভুল পাসওয়ার্ড। দয়া করে সঠিক পাসওয়ার্ড দিন।");
+                document.getElementById('adminPass').value = '';
+            }
+        }
+
+        // ৪. লগআউট ফাংশন
+        function logoutAdmin() {
+            window.location.href = "../index.html";
+        }
+    </script>
+</body>
+</html>
