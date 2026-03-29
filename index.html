@@ -11,7 +11,7 @@
 <body>
     <div class="header">
         <h2 style="margin:0;">Unique Network</h2>
-        <p style="margin:5px 0 0; font-size:14px; opacity:0.9;">আপনার ডিজিটাল নিরাপত্তার সঙ্গী</p>
+        <p style="margin:5px 0 0; font-size:14px; opacity:0.9;">আপনার ডিজিটাল নিরাপত্তার বিশ্বস্ত সঙ্গী</p>
     </div>
 
     <div class="container">
@@ -26,18 +26,28 @@
             <div class="card" onclick="openLink('https://www.fast.com')"><i class="fas fa-tachometer-alt"></i><p>Speed Test</p></div>
             <div class="card" onclick="calculateBill()"><i class="fas fa-file-invoice-dollar"></i><p>Bill Calc</p></div>
             <div class="card" onclick="generatePass()"><i class="fas fa-key"></i><p>Pass Gen</p></div>
-            <div class="card" onclick="alert('সার্ভার স্ট্যাটাস: অনলাইন ✅')"><i class="fas fa-server"></i><p>Status</p></div>
+            <div class="card" onclick="alert('সার্ভার স্ট্যাটাস: অনলাইন ✅')"><i class="fas fa-server"></i><p>System Status</p></div>
             <div class="card" onclick="toggleDarkMode()"><i class="fas fa-moon"></i><p>Theme</p></div>
         </div>
     </div>
 
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item active"><i class="fas fa-home"></i>Home</a>
-        <a href="#" class="nav-item" onclick="alert('Tools Coming Soon')"><i class="fas fa-tools"></i>Tools</a>
-        <a href="https://t.me/YourUsername" class="nav-item"><i class="fas fa-headset"></i>Support</a>
+        <a href="tools.html" class="nav-item"><i class="fas fa-tools"></i>Tools</a>
+        <a href="javascript:void(0)" class="nav-item" onclick="openSupportPopup()"><i class="fas fa-headset"></i>Support</a>
         <a href="admin/dashboard.html" class="nav-item"><i class="fas fa-user-shield"></i>Admin</a>
     </nav>
 
     <script src="js/main.js"></script>
+    <script>
+        function openSupportPopup() {
+            const tg = window.Telegram.WebApp;
+            tg.showConfirm("আপনি কি আমাদের সাপোর্ট বটের সাথে কথা বলতে চান?", (confirm) => {
+                if (confirm) {
+                    tg.openTelegramLink("https://t.me/UniqueAIAssistantBot");
+                }
+            });
+        }
+    </script>
 </body>
 </html>
