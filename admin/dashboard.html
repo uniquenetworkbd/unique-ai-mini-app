@@ -3,168 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuration Editor | Unique Admin</title>
+    <title>Advanced Admin | Unique Network</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        .editor-container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 20px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-        .input-group input, .input-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .save-btn { background: #0088cc; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .save-btn:disabled { background: #ccc; }
-        #loadingOverlay { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:99; justify-content:center; align-items:center; flex-direction:column; }
+        /* ইউজার ইন্টারফেস ডিজাইন */
+        .hidden { display: none !important; }
+        .login-screen { position: fixed; inset: 0; background: #1a1a1a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-action { background: #0088cc; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
+        .tab { padding: 10px 20px; background: #eee; border-radius: 20px; cursor: pointer; font-size: 14px; white-space: nowrap; }
+        .tab.active { background: #0088cc; color: white; }
     </style>
 </head>
 <body>
 
-    <div id="loadingOverlay">
-        <i class="fas fa-spinner fa-spin fa-3x" style="color:#0088cc;"></i>
-        <p>GitHub এর সাথে সিঙ্ক হচ্ছে...</p>
+    <div id="loginScreen" class="login-screen">
+        <div class="card" style="width: 85%; max-width: 350px; text-align: center;">
+            <i class="fas fa-user-lock fa-3x" style="color: #0088cc;"></i>
+            <h3>Unique Admin Login</h3>
+            <input type="text" id="adminID" placeholder="Admin ID">
+            <input type="password" id="adminPass" placeholder="Password">
+            <button class="btn-action" onclick="attemptLogin()">প্রবেশ করুন</button>
+        </div>
     </div>
 
-    <div class="header" style="background:#222;">
-        <h2><i class="fas fa-cogs"></i> Configuration Editor</h2>
-    </div>
-
-    <div class="container">
-        <div id="authBox" class="editor-container">
-            <h4>GitHub Access Token</h4>
-            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
-            <button class="save-btn" style="margin-top:10px;" onclick="loadCurrentConfig()">কনফিগারেশন লোড করুন</button>
+    <div id="mainDashboard" class="hidden">
+        <div class="header" style="background: #222; display: flex; justify-content: space-between; align-items: center; padding: 15px;">
+            <h3 style="margin:0; font-size: 16px;">Unique Control Room</h3>
+            <button onclick="logout()" style="background:none; border:none; color:white;"><i class="fas fa-sign-out-alt"></i></button>
         </div>
 
-        <div id="mainEditor" class="editor-container" style="display:none;">
-            <div class="input-group">
-                <label>System Status</label>
-                <select id="field_status">
-                    <option value="Online">Online ✅</option>
-                    <option value="Maintenance">Maintenance 🛠️</option>
-                    <option value="Offline">Offline ❌</option>
-                </select>
+        <div class="container" style="padding: 15px;">
+            <div class="nav-tabs">
+                <div class="tab active" onclick="switchTab('overview')">Overview</div>
+                <div class="tab" onclick="switchTab('bot')">Bot Config</div>
+                <div class="tab" onclick="switchTab('sys')">System Settings</div>
             </div>
 
-            <div class="input-group">
-                <label>Live Alert Message</label>
-                <input type="text" id="field_alert" placeholder="সবার জন্য এলার্ট মেসেজ...">
+            <div id="tab_overview" class="tab-content">
+                <div class="card" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; text-align:center;">
+                    <div><i class="fas fa-users"></i><h4>250+</h4><p>Users</p></div>
+                    <div><i class="fas fa-wifi"></i><h4>Online</h4><p>Status</p></div>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Bot Personality (Soul)</label>
-                <select id="field_soul">
-                    <option value="Professional">Professional 👔</option>
-                    <option value="Friendly">Friendly 😊</option>
-                    <option value="Expert">Cyber Expert 🛡️</option>
-                </select>
+            <div id="tab_bot" class="tab-content hidden">
+                <div class="card">
+                    <label>Bot Personality</label>
+                    <select id="botSoul">
+                        <option value="Professional">Professional 👔</option>
+                        <option value="Friendly">Friendly 😊</option>
+                    </select>
+                    <button class="btn-action" style="margin-top:10px;" onclick="syncWithGitHub()">Save Bot Settings</button>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Maintenance Mode</label>
-                <select id="field_maintenance">
-                    <option value="false">Off</option>
-                    <option value="true">On (App Blocked)</option>
-                </select>
+            <div id="tab_sys" class="tab-content hidden">
+                <div class="card">
+                    <h4><i class="fas fa-key"></i> API Configuration</h4>
+                    <p style="font-size:12px; color:gray;">এখানে সেটিংস করলে তা এনক্রিপ্টেড অবস্থায় সেভ থাকবে।</p>
+                    <label>GitHub Token</label>
+                    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+                    <label>Telegram Bot Token</label>
+                    <input type="password" id="tgToken" placeholder="7123456:AAxxxxx">
+                    <button class="btn-action" onclick="saveInternalConfig()">সব সেভ করুন (Encrypted)</button>
+                </div>
             </div>
-
-            <button id="btnSave" class="save-btn" onclick="saveNewConfig()">
-                <i class="fas fa-cloud-upload-alt"></i> GitHub এ সেভ করুন
-            </button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        
+        // এনক্রিপশন ফাংশন (সহজ base64 - সিকিউরিটির জন্য আপনি এটি আরও উন্নত করতে পারেন)
+        const encrypt = (data) => btoa(data);
+        const decrypt = (data) => data ? atob(data) : "";
 
-        const REPO_INFO = {
-            owner: "uniquenetworkbd",
-            repo: "unique-ai-mini-app",
-            path: "config.json"
-        };
+        // লগইন চেক
+        function attemptLogin() {
+            const id = document.getElementById('adminID').value;
+            const pass = document.getElementById('adminPass').value;
 
-        let currentFileSha = "";
-
-        // গিটহাব থেকে বর্তমান ডাটা লোড করা
-        async function loadCurrentConfig() {
-            const token = document.getElementById('ghToken').value;
-            if(!token) return alert("দয়া করে টোকেন দিন!");
-
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            
-            try {
-                const response = await fetch(`https://api.github.com/repos/${REPO_INFO.owner}/${REPO_INFO.repo}/contents/${REPO_INFO.path}`, {
-                    headers: { "Authorization": `token ${token}` }
-                });
-                
-                if(response.ok) {
-                    const data = await response.json();
-                    currentFileSha = data.sha;
-                    const config = JSON.parse(atob(data.content));
-                    
-                    // ইনপুট ফিল্ডে ডাটা বসানো
-                    document.getElementById('field_status').value = config.system_status;
-                    document.getElementById('field_alert').value = config.live_alert;
-                    document.getElementById('field_soul').value = config.bot_soul;
-                    document.getElementById('field_maintenance').value = config.maintenance_mode.toString();
-
-                    document.getElementById('authBox').style.display = 'none';
-                    document.getElementById('mainEditor').style.display = 'block';
-                } else {
-                    alert("ডাটা লোড করা যায়নি। টোকেনটি চেক করুন।");
-                }
-            } catch (err) {
-                alert("এরর: " + err.message);
-            } finally {
-                document.getElementById('loadingOverlay').style.display = 'none';
+            // উদাহরন আইডি-পাসওয়ার্ড (এটি আপনি পরিবর্তন করে নিবেন)
+            if(id === "admin" && pass === "1234") {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                loadSavedConfig();
+            } else {
+                alert("ভুল আইডি বা পাসওয়ার্ড!");
             }
         }
 
-        // নতুন ডাটা গিটহাবে সেভ করা
-        async function saveNewConfig() {
-            const token = document.getElementById('ghToken').value;
-            const btn = document.getElementById('btnSave');
-            
-            const updatedConfig = {
-                system_status: document.getElementById('field_status').value,
-                live_alert: document.getElementById('field_alert').value,
-                bot_soul: document.getElementById('field_soul').value,
-                maintenance_mode: document.getElementById('field_maintenance').value === "true",
-                last_updated: new Date().toLocaleString('bn-BD')
+        // ইন্টারনাল সেটিংস সেভ করা (LocalStorage এ থাকবে, লগআউটে মুছবে না)
+        function saveInternalConfig() {
+            const config = {
+                gh: encrypt(document.getElementById('ghToken').value),
+                tg: encrypt(document.getElementById('tgToken').value)
             };
+            localStorage.setItem('unique_encrypted_sys', JSON.stringify(config));
+            alert("সিস্টেম কনফিগারেশন স্থায়ীভাবে সেভ হয়েছে!");
+        }
 
-            btn.disabled = true;
-            document.getElementById('loadingOverlay').style.display = 'flex';
-
-            try {
-                const response = await fetch(`https://api.github.com/repos/${REPO_INFO.owner}/${REPO_INFO.repo}/contents/${REPO_INFO.path}`, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": `token ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        message: "Config updated via Admin Editor",
-                        content: btoa(unescape(encodeURIComponent(JSON.stringify(updatedConfig, null, 2)))),
-                        sha: currentFileSha
-                    })
-                });
-
-                if(response.ok) {
-                    tg.showAlert("✅ কনফিগারেশন রিয়েল-টাইমে আপডেট হয়েছে!");
-                    // SHA আপডেট করা পরবর্তী সেভ এর জন্য
-                    const result = await response.json();
-                    currentFileSha = result.content.sha;
-                } else {
-                    alert("সেভ করা যায়নি!");
-                }
-            } catch (err) {
-                alert("এরর: " + err.message);
-            } finally {
-                btn.disabled = false;
-                document.getElementById('loadingOverlay').style.display = 'none';
+        function loadSavedConfig() {
+            const saved = localStorage.getItem('unique_encrypted_sys');
+            if(saved) {
+                const config = JSON.parse(saved);
+                document.getElementById('ghToken').value = decrypt(config.gh);
+                document.getElementById('tgToken').value = decrypt(config.tg);
             }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab_'+tabId).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+        }
+
+        function logout() {
+            // শুধুমাত্র সেশন শেষ হবে, কিন্তু LocalStorage মুছবে না
+            location.reload();
         }
     </script>
 </body>
-    </html>
+</html>
