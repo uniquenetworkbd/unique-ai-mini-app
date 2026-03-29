@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unique Tools | আপনার ডিজিটাল প্রয়োজনীয় টুলস</title>
+    <title>Unique Tools | আপনার ডিজিটাল টুলস</title>
     <link rel="stylesheet" href="css/style.css">
+    <link id="theme-style" rel="stylesheet" href="">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -17,17 +18,17 @@
     <div class="container">
         <div class="ai-box" style="border-left: 6px solid #e2136e;">
             <h4 style="color:#e2136e; margin-top:0;"><i class="fas fa-calculator"></i> বিকাশ ক্যালকুলেটর (Advanced)</h4>
-            <input type="number" id="bkashAmount" placeholder="টাকার পরিমাণ লিখুন..." style="border: 1px solid #e2136e; width: calc(100% - 24px);">
+            <input type="number" id="bkashAmount" placeholder="টাকার পরিমাণ লিখুন..." style="border: 1px solid #e2136e; width: 100%; box-sizing: border-box;">
             <button class="btn-main" style="background:#e2136e; margin-top: 10px;" onclick="calculateBkash()">চার্জ হিসাব করুন</button>
             <div id="bkashResult" style="margin-top:15px;"></div>
         </div>
 
         <h3 style="margin-top:20px;"><i class="fas fa-th-large"></i> অন্যান্য টুলস</h3>
         <div class="grid">
-            <div class="card" onclick="generatePass()"><i class="fas fa-key"></i><p>Pass Generator</p></div>
+            <div class="card" onclick="generatePass()"><i class="fas fa-key"></i><p>Pass Gen</p></div>
             <div class="card" onclick="alert('QR কোড শীঘ্রই আসছে...')"><i class="fas fa-qrcode"></i><p>QR Code</p></div>
-            <div class="card" onclick="openLink('https://www.google.com/search?q=unit+converter')"><i class="fas fa-balance-scale"></i><p>Unit Converter</p></div>
             <div class="card" onclick="openLink('https://www.whatismyip.com')"><i class="fas fa-network-wired"></i><p>IP Checker</p></div>
+            <div class="card" onclick="toggleDarkMode()"><i class="fas fa-moon"></i><p>Theme</p></div>
         </div>
     </div>
 
@@ -42,7 +43,7 @@
     <script>
         function openSupportPopup() {
             const tg = window.Telegram.WebApp;
-            tg.showConfirm("সরাসরি সাপোর্ট বটের (@UniqueAIAssistantBot) সাথে কথা বলতে চান?", (confirm) => {
+            tg.showConfirm("সরাসরি সাপোর্ট বটের সাথে কথা বলতে চান?", (confirm) => {
                 if (confirm) {
                     tg.openTelegramLink("https://t.me/UniqueAIAssistantBot");
                 }
@@ -50,4 +51,4 @@
         }
     </script>
 </body>
-                                                  </html>
+</html>
