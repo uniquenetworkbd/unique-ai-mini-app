@@ -1,29 +1,24 @@
-let tg = window.Telegram.WebApp;
-tg.expand();
+// আপনার আগের ফাংশনগুলো (askAI, generatePass ইত্যাদি) এখানে থাকবে...
 
-function openLink(url) { tg.openLink(url); }
-
-function askAI() {
-    let query = document.getElementById('aiQuery').value;
-    if(query) {
-        tg.sendData(query);
-        alert("আপনার প্রশ্নটি জমা হয়েছে। এআই শীঘ্রই উত্তর দেবে।");
-    } else {
-        alert("দয়া করে কিছু লিখুন।");
+// Advanced Bkash Calculator
+function calculateBkash() {
+    let amount = parseFloat(document.getElementById('bkashAmount').value);
+    if (!amount || amount <= 0) {
+        alert("দয়া করে সঠিক টাকার পরিমাণ লিখুন।");
+        return;
     }
-}
 
-function calculateBill() {
-    let speed = prompt("কত Mbps ইন্টারনেট প্রয়োজন?");
-    if(speed) alert(speed + " Mbps এর আনুমানিক বিল " + (speed * 100) + " টাকা।");
-}
+    let appCharge = (amount * 17.5) / 1000;
+    let ussdCharge = (amount * 18.5) / 1000;
 
-function toggleDarkMode() {
-    document.body.style.backgroundColor = (document.body.style.backgroundColor === 'rgb(34, 34, 34)') ? '#f4f7f6' : '#222';
-    document.body.style.color = (document.body.style.color === 'white') ? '#333' : 'white';
-}
-
-function generatePass() {
-    let pass = Math.random().toString(36).slice(-10);
-    alert("আপনার সিকিউর পাসওয়ার্ড: " + pass);
+    let resultHtml = `
+        <div style="text-align:left; font-size:14px; background:#fff3f8; padding:12px; border-radius:10px; border:1px solid #e2136e;">
+            <b style="color:#e2136e;">রেজাল্ট:</b><br>
+            অ্যাপ চার্জ: ৳${appCharge.toFixed(2)}<br>
+            ম্যানুয়াল (USSD): ৳${ussdCharge.toFixed(2)}<br>
+            <hr style="border: 0.5px solid #e2136e;">
+            <b>টোটাল ক্যাশ-ইন (App): ৳${(amount + appCharge).toFixed(2)}</b>
+        </div>
+    `;
+    document.getElementById('bkashResult').innerHTML = resultHtml;
 }
