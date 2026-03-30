@@ -4,1077 +4,374 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unique Network BD - ISP Management Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            background: white;
-            border-radius: 15px;
-            padding: 20px 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            color: #667eea;
-            font-size: 24px;
-        }
-
-        .header h1 small {
-            font-size: 12px;
-            color: #999;
-            display: block;
-        }
-
-        .save-status {
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .save-status.success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .save-status.error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: rgba(255,255,255,0.9);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            color: #667eea;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: #764ba2;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Forms */
-        .config-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .config-section h3 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group label {
-            width: 150px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input, .form-group select {
-            flex: 1;
-            min-width: 250px;
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* System Health */
-        .health-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .health-card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            border-left: 4px solid #ddd;
-            transition: all 0.3s;
-        }
-
-        .health-card h4 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ccc;
-            transition: all 0.3s;
-        }
-
-        .status-dot.online {
-            background: #4caf50;
-            box-shadow: 0 0 10px #4caf50;
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.offline {
-            background: #f44336;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-        }
-
-        .status-text {
-            font-size: 14px;
-        }
-
-        .status-text.online {
-            color: #4caf50;
-        }
-
-        .status-text.offline {
-            color: #f44336;
-        }
-
-        .health-details {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* Repository Selector */
-        .repo-selector {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .repo-dropdown {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Alert Messages */
-        .alert {
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert.show {
-            display: block;
-            animation: slideDown 0.3s;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-group {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .form-group label {
-                width: auto;
-            }
-            
-            .form-group input, .form-group select {
-                width: 100%;
-            }
-            
-            .tabs {
-                flex-direction: column;
-            }
-            
-            .tab-btn {
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>
-                🌐 Unique Network BD Dashboard
-                <small>ISP Management System v2.0</small>
-            </h1>
-            <div id="saveStatus" class="save-status"></div>
-        </div>
-
-        <div id="alertContainer"></div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('system')">📊 System Health</button>
-            <button class="tab-btn" onclick="switchTab('telegram')">🤖 Telegram Bot</button>
-            <button class="tab-btn" onclick="switchTab('mikrotik')">🖥️ MikroTik Router</button>
-            <button class="tab-btn" onclick="switchTab('olt')">🔌 OLT (SNMP)</button>
-            <button class="tab-btn" onclick="switchTab('github')">🐙 GitHub Settings</button>
-        </div>
-
-        <!-- System Health Tab -->
-        <div id="system" class="tab-content active">
-            <h2>📊 System Health Monitor</h2>
-            <div class="health-grid" id="healthGrid">
-                <!-- Dynamic health cards will be inserted here -->
-            </div>
-            <div style="margin-top: 20px; text-align: center;">
-                <button onclick="refreshHealth()">🔄 Refresh Status</button>
-            </div>
-        </div>
-
-        <!-- Telegram Bot Tab -->
-        <div id="telegram" class="tab-content">
-            <h2>🤖 Telegram Bot Configuration</h2>
-            <div class="config-section">
-                <div class="form-group">
-                    <label>Bot Token:</label>
-                    <input type="password" id="telegramToken" placeholder="Enter Telegram Bot Token">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-network-wired"></i>
+                    <span>Unique Network BD</span>
                 </div>
-                <div class="form-group">
-                    <label>Admin Chat ID:</label>
-                    <input type="text" id="telegramChatId" placeholder="Enter Admin Chat ID">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="network">
+                    <i class="fas fa-server"></i>
+                    <span>Network Monitor</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="onu">
+                    <i class="fas fa-wifi"></i>
+                    <span>ONU Management</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="logs">
+                    <i class="fas fa-history"></i>
+                    <span>System Logs</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="lastUpdate">Last update: --</p>
                 </div>
-                <div class="form-group">
-                    <label>Bot Status:</label>
-                    <div id="telegramStatus" style="flex:1;">
-                        <span class="status-dot"></span>
-                        <span>Not tested</span>
+                <div class="header-controls">
+                    <button class="control-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <div class="control-group">
+                        <i class="fas fa-clock"></i>
+                        <label class="switch">
+                            <input type="checkbox" id="autoRefreshToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Auto-refresh (10s)</span>
                     </div>
+                    <button class="control-btn" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
                 </div>
-                <button onclick="testTelegram()">🔍 Test Connection</button>
-                <button onclick="saveConfig()" style="margin-left: 10px;">💾 Save Configuration</button>
-            </div>
-        </div>
+            </header>
 
-        <!-- MikroTik Tab -->
-        <div id="mikrotik" class="tab-content">
-            <h2>🖥️ MikroTik Router Configuration</h2>
-            <div class="config-section">
-                <div class="form-group">
-                    <label>Router IP:</label>
-                    <input type="text" id="mikrotikIp" placeholder="192.168.1.1">
-                </div>
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" id="mikrotikUser" placeholder="admin">
-                </div>
-                <div class="form-group">
-                    <label>Password:</label>
-                    <input type="password" id="mikrotikPass" placeholder="Password">
-                </div>
-                <div class="form-group">
-                    <label>Port:</label>
-                    <input type="text" id="mikrotikPort" placeholder="8728" value="8728">
-                </div>
-                <div class="form-group">
-                    <label>Connection Status:</label>
-                    <div id="mikrotikStatus" style="flex:1;">
-                        <span class="status-dot"></span>
-                        <span>Not tested</span>
-                    </div>
-                </div>
-                <button onclick="testMikrotik()">🔍 Test Connection</button>
-                <button onclick="saveConfig()" style="margin-left: 10px;">💾 Save Configuration</button>
-            </div>
-        </div>
-
-        <!-- OLT SNMP Tab -->
-        <div id="olt" class="tab-content">
-            <h2>🔌 OLT (SNMP) Configuration</h2>
-            <div class="config-section">
-                <div class="form-group">
-                    <label>OLT IP:</label>
-                    <input type="text" id="oltIp" placeholder="192.168.1.100">
-                </div>
-                <div class="form-group">
-                    <label>SNMP Community:</label>
-                    <input type="text" id="oltCommunity" placeholder="public">
-                </div>
-                <div class="form-group">
-                    <label>SNMP Port:</label>
-                    <input type="text" id="oltPort" placeholder="161" value="161">
-                </div>
-                <div class="form-group">
-                    <label>SNMP Version:</label>
-                    <select id="oltVersion">
-                        <option value="2c">v2c</option>
-                        <option value="1">v1</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Connection Status:</label>
-                    <div id="oltStatus" style="flex:1;">
-                        <span class="status-dot"></span>
-                        <span>Not tested</span>
-                    </div>
-                </div>
-                <button onclick="testOLT()">🔍 Test Connection</button>
-                <button onclick="saveConfig()" style="margin-left: 10px;">💾 Save Configuration</button>
-            </div>
-        </div>
-
-        <!-- GitHub Settings Tab -->
-        <div id="github" class="tab-content">
-            <h2>🐙 GitHub Configuration</h2>
-            <div class="config-section">
-                <div class="form-group">
-                    <label>GitHub Token:</label>
-                    <input type="password" id="githubToken" placeholder="Enter GitHub Personal Access Token">
-                </div>
-                <div class="form-group">
-                    <label>Repository Selector:</label>
-                    <div style="flex:1;">
-                        <div class="repo-selector">
-                            <div id="repoLoading" style="display: none;">
-                                <span class="loading"></span> Loading repositories...
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboardTab">
+                <!-- System Health Cards -->
+                <div class="health-grid">
+                    <div class="health-card" data-service="github">
+                        <div class="card-header">
+                            <i class="fab fa-github"></i>
+                            <h3>GitHub API</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="status-indicator">
+                                <span class="pulse"></span>
+                                <span class="status-text">Checking...</span>
                             </div>
-                            <select id="repoSelect" class="repo-dropdown" onchange="onRepoSelect()">
-                                <option value="">Select a repository</option>
-                            </select>
-                            <div id="repoInfo" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span>Latency</span>
+                                    <span class="value">-- ms</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-card" data-service="telegram">
+                        <div class="card-header">
+                            <i class="fab fa-telegram"></i>
+                            <h3>Telegram Bot</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="status-indicator">
+                                <span class="pulse"></span>
+                                <span class="status-text">Checking...</span>
+                            </div>
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span>Messages</span>
+                                    <span class="value">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-card" data-service="mikrotik">
+                        <div class="card-header">
+                            <i class="fas fa-router"></i>
+                            <h3>MikroTik Router</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="status-indicator">
+                                <span class="pulse"></span>
+                                <span class="status-text">Checking...</span>
+                            </div>
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span>CPU Load</span>
+                                    <span class="value">--%</span>
+                                </div>
+                                <div class="metric">
+                                    <span>RAM Usage</span>
+                                    <span class="value">--%</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Uptime</span>
+                                    <span class="value">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-card" data-service="olt">
+                        <div class="card-header">
+                            <i class="fas fa-tower-cell"></i>
+                            <h3>OLT (BDCOM)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="status-indicator">
+                                <span class="pulse"></span>
+                                <span class="status-text">Checking...</span>
+                            </div>
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span>ONUs Online</span>
+                                    <span class="value">--</span>
+                                </div>
+                                <div class="metric warning-metric">
+                                    <span>Signal Warnings</span>
+                                    <span class="value">--</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Config File Path:</label>
-                    <input type="text" id="configPath" placeholder="config.json" value="config.json">
-                </div>
-                <div class="form-group">
-                    <label>GitHub Status:</label>
-                    <div id="githubStatus" style="flex:1;">
-                        <span class="status-dot"></span>
-                        <span>Not tested</span>
+
+                <!-- Bandwidth Monitor -->
+                <div class="bandwidth-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-line"></i> Real-Time Bandwidth</h2>
+                        <div class="bandwidth-controls">
+                            <select id="interfaceSelect">
+                                <option value="wan">WAN Interface</option>
+                                <option value="lan">LAN Interface</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bandwidth-chart">
+                        <canvas id="bandwidthChart"></canvas>
+                    </div>
+                    <div class="bandwidth-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-arrow-down"></i>
+                            <div>
+                                <span>Download</span>
+                                <strong id="downloadSpeed">0 Mbps</strong>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-arrow-up"></i>
+                            <div>
+                                <span>Upload</span>
+                                <strong id="uploadSpeed">0 Mbps</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button onclick="testGitHub()">🔍 Test Connection</button>
-                <button onclick="fetchRepos()">📂 Fetch Repositories</button>
-                <button onclick="saveConfig()" style="margin-left: 10px;">💾 Save Configuration</button>
+
+                <!-- Active Users -->
+                <div class="users-section">
+                    <h2><i class="fas fa-users"></i> Active PPPoE/Hotspot Users</h2>
+                    <div class="users-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>IP Address</th>
+                                    <th>Uptime</th>
+                                    <th>Traffic (MB)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activeUsersList">
+                                <tr><td colspan="5">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Network Monitor Tab -->
+            <div class="tab-content" id="networkTab">
+                <div class="network-stats-grid">
+                    <div class="stats-card">
+                        <h3>CPU Usage</h3>
+                        <div class="progress-circle" data-value="0">
+                            <svg viewBox="0 0 36 36">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path class="circle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stats-card">
+                        <h3>Memory Usage</h3>
+                        <div class="progress-circle" data-value="0">
+                            <svg viewBox="0 0 36 36">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path class="circle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ONU Management Tab -->
+            <div class="tab-content" id="onuTab">
+                <div class="onu-controls">
+                    <button class="btn-primary" id="scanOnuBtn">
+                        <i class="fas fa-search"></i> Scan ONUs
+                    </button>
+                    <div class="warning-badge" id="onuWarningBadge"></div>
+                </div>
+                <div class="onu-table-container">
+                    <table class="onu-table">
+                        <thead>
+                            <tr>
+                                <th>ONU ID</th>
+                                <th>Serial Number</th>
+                                <th>RX Power (dBm)</th>
+                                <th>TX Power (dBm)</th>
+                                <th>Status</th>
+                                <th>Signal Quality</th>
+                            </tr>
+                        </thead>
+                        <tbody id="onuList">
+                            <tr><td colspan="6">No ONU data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settingsTab">
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h2><i class="fab fa-github"></i> GitHub Configuration</h2>
+                        <div class="form-group">
+                            <label>Personal Access Token (PAT)</label>
+                            <input type="password" id="githubToken" placeholder="Enter GitHub PAT">
+                            <small>Required for repository access and data storage</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Repository</label>
+                            <select id="repoSelect">
+                                <option value="">Select a repository</option>
+                            </select>
+                            <button id="scanReposBtn" class="btn-secondary">Scan Repositories</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2><i class="fab fa-telegram"></i> Telegram Bot Configuration</h2>
+                        <div class="form-group">
+                            <label>Bot Token</label>
+                            <input type="password" id="telegramToken" placeholder="Enter bot token">
+                        </div>
+                        <div class="form-group">
+                            <label>Admin Chat ID</label>
+                            <input type="text" id="adminChatId" placeholder="Enter admin chat ID">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2><i class="fas fa-router"></i> MikroTik Configuration</h2>
+                        <div class="form-group">
+                            <label>IP Address</label>
+                            <input type="text" id="mikrotikIp" placeholder="192.168.1.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Port</label>
+                            <input type="number" id="mikrotikPort" value="8728">
+                        </div>
+                        <div class="form-group">
+                            <label>Username (Read-Only)</label>
+                            <input type="text" id="mikrotikUser" placeholder="readonly">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="mikrotikPass">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2><i class="fas fa-tower-cell"></i> OLT SNMP Configuration</h2>
+                        <div class="form-group">
+                            <label>IP Address</label>
+                            <input type="text" id="oltIp" placeholder="192.168.1.100">
+                        </div>
+                        <div class="form-group">
+                            <label>Community String</label>
+                            <input type="text" id="oltCommunity" placeholder="public">
+                        </div>
+                        <div class="form-group">
+                            <label>SNMP Version</label>
+                            <select id="snmpVersion">
+                                <option value="2c">v2c</option>
+                                <option value="1">v1</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button id="saveSettingsBtn" class="btn-primary">
+                            <i class="fas fa-save"></i> Save All Settings
+                        </button>
+                        <button id="testConnectionBtn" class="btn-secondary">
+                            <i class="fas fa-plug"></i> Test Connections
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div class="tab-content" id="logsTab">
+                <div class="logs-container">
+                    <div class="logs-header">
+                        <h2><i class="fas fa-history"></i> System Logs</h2>
+                        <button id="clearLogsBtn" class="btn-secondary">Clear Logs</button>
+                    </div>
+                    <div class="logs-list" id="logsList">
+                        <div class="log-entry">System initialized</div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script>
-        // Global configuration
-        let currentConfig = {
-            telegram: { token: '', chatId: '' },
-            mikrotik: { ip: '', user: '', password: '', port: '8728' },
-            olt: { ip: '', community: '', port: '161', version: '2c' },
-            github: { token: '', repo: '', configPath: 'config.json' }
-        };
-
-        // API Base URL (GitHub raw content)
-        let githubRawBase = '';
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadConfig();
-            refreshHealth();
-            
-            // Auto-refresh health every 30 seconds
-            setInterval(refreshHealth, 30000);
-        });
-
-        // Tab switching
-        function switchTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update content
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-        }
-
-        // Load configuration from GitHub
-        async function loadConfig() {
-            try {
-                const savedConfig = localStorage.getItem('isp_dashboard_config');
-                if (savedConfig) {
-                    const config = JSON.parse(savedConfig);
-                    currentConfig = config;
-                    populateFormFields(config);
-                    
-                    // If GitHub token exists, try to load from GitHub too
-                    if (config.github.token && config.github.repo) {
-                        await loadConfigFromGitHub();
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading config:', error);
-                showAlert('Failed to load configuration', 'error');
-            }
-        }
-
-        // Load config from GitHub
-        async function loadConfigFromGitHub() {
-            if (!currentConfig.github.token || !currentConfig.github.repo) return;
-            
-            try {
-                const [owner, repo] = currentConfig.github.repo.split('/');
-                const url = `https://api.github.com/repos/${owner}/${repo}/contents/${currentConfig.github.configPath}`;
-                
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${currentConfig.github.token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const content = atob(data.content);
-                    const config = JSON.parse(content);
-                    currentConfig = { ...currentConfig, ...config };
-                    populateFormFields(currentConfig);
-                    showAlert('Configuration loaded from GitHub', 'success');
-                }
-            } catch (error) {
-                console.error('Error loading from GitHub:', error);
-            }
-        }
-
-        // Populate form fields from config
-        function populateFormFields(config) {
-            // Telegram
-            document.getElementById('telegramToken').value = config.telegram?.token || '';
-            document.getElementById('telegramChatId').value = config.telegram?.chatId || '';
-            
-            // MikroTik
-            document.getElementById('mikrotikIp').value = config.mikrotik?.ip || '';
-            document.getElementById('mikrotikUser').value = config.mikrotik?.user || '';
-            document.getElementById('mikrotikPass').value = config.mikrotik?.password || '';
-            document.getElementById('mikrotikPort').value = config.mikrotik?.port || '8728';
-            
-            // OLT
-            document.getElementById('oltIp').value = config.olt?.ip || '';
-            document.getElementById('oltCommunity').value = config.olt?.community || '';
-            document.getElementById('oltPort').value = config.olt?.port || '161';
-            document.getElementById('oltVersion').value = config.olt?.version || '2c';
-            
-            // GitHub
-            document.getElementById('githubToken').value = config.github?.token || '';
-            document.getElementById('configPath').value = config.github?.configPath || 'config.json';
-            
-            if (config.github?.repo) {
-                const repoSelect = document.getElementById('repoSelect');
-                if (!Array.from(repoSelect.options).some(opt => opt.value === config.github.repo)) {
-                    const option = document.createElement('option');
-                    option.value = config.github.repo;
-                    option.text = config.github.repo;
-                    repoSelect.add(option);
-                }
-                repoSelect.value = config.github.repo;
-            }
-        }
-
-        // Save configuration to GitHub
-        async function saveConfig() {
-            // Collect form data
-            const newConfig = {
-                telegram: {
-                    token: document.getElementById('telegramToken').value,
-                    chatId: document.getElementById('telegramChatId').value
-                },
-                mikrotik: {
-                    ip: document.getElementById('mikrotikIp').value,
-                    user: document.getElementById('mikrotikUser').value,
-                    password: document.getElementById('mikrotikPass').value,
-                    port: document.getElementById('mikrotikPort').value
-                },
-                olt: {
-                    ip: document.getElementById('oltIp').value,
-                    community: document.getElementById('oltCommunity').value,
-                    port: document.getElementById('oltPort').value,
-                    version: document.getElementById('oltVersion').value
-                },
-                github: {
-                    token: document.getElementById('githubToken').value,
-                    repo: document.getElementById('repoSelect').value,
-                    configPath: document.getElementById('configPath').value
-                },
-                lastUpdated: new Date().toISOString()
-            };
-            
-            // Validate required fields
-            if (!newConfig.github.token) {
-                showAlert('GitHub token is required for saving configuration', 'error');
-                return;
-            }
-            
-            if (!newConfig.github.repo) {
-                showAlert('Please select a repository', 'error');
-                return;
-            }
-            
-            currentConfig = newConfig;
-            
-            // Save to localStorage
-            localStorage.setItem('isp_dashboard_config', JSON.stringify(currentConfig));
-            
-            // Save to GitHub
-            const saveStatus = document.getElementById('saveStatus');
-            saveStatus.textContent = 'Saving...';
-            saveStatus.className = 'save-status';
-            
-            try {
-                await saveConfigToGitHub(newConfig);
-                saveStatus.textContent = '✓ Saved successfully';
-                saveStatus.className = 'save-status success';
-                setTimeout(() => {
-                    saveStatus.className = 'save-status';
-                    saveStatus.textContent = '';
-                }, 3000);
-                
-                showAlert('Configuration saved to GitHub successfully', 'success');
-            } catch (error) {
-                console.error('Error saving to GitHub:', error);
-                saveStatus.textContent = '✗ Save failed';
-                saveStatus.className = 'save-status error';
-                showAlert('Failed to save configuration: ' + error.message, 'error');
-            }
-        }
-        
-        // Save config to GitHub
-        async function saveConfigToGitHub(config) {
-            const [owner, repo] = config.github.repo.split('/');
-            const filePath = config.github.configPath;
-            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-            
-            // Check if file exists
-            let sha = null;
-            try {
-                const getResponse = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${config.github.token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (getResponse.ok) {
-                    const data = await getResponse.json();
-                    sha = data.sha;
-                }
-            } catch (error) {
-                console.log('File might not exist, will create new');
-            }
-            
-            // Prepare content
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(config, null, 2))));
-            
-            const body = {
-                message: `Update configuration ${new Date().toISOString()}`,
-                content: content,
-                branch: 'main'
-            };
-            
-            if (sha) {
-                body.sha = sha;
-            }
-            
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${config.github.token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`GitHub API error: ${response.status}`);
-            }
-            
-            return await response.json();
-        }
-
-        // Fetch repositories from GitHub
-        async function fetchRepos() {
-            const token = document.getElementById('githubToken').value;
-            if (!token) {
-                showAlert('Please enter GitHub token first', 'error');
-                return;
-            }
-            
-            const repoSelect = document.getElementById('repoSelect');
-            const loading = document.getElementById('repoLoading');
-            
-            loading.style.display = 'block';
-            repoSelect.disabled = true;
-            
-            try {
-                const response = await fetch('https://api.github.com/user/repos?per_page=100', {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const repos = await response.json();
-                
-                // Clear existing options
-                repoSelect.innerHTML = '<option value="">Select a repository</option>';
-                
-                // Add repos to dropdown
-                repos.forEach(repo => {
-                    const option = document.createElement('option');
-                    option.value = `${repo.owner.login}/${repo.name}`;
-                    option.text = `${repo.owner.login}/${repo.name}`;
-                    repoSelect.appendChild(option);
-                });
-                
-                showAlert(`Loaded ${repos.length} repositories`, 'success');
-                
-                // Update repo info
-                const repoInfo = document.getElementById('repoInfo');
-                repoInfo.innerHTML = `📁 Total repositories: ${repos.length}<br>🔗 API Rate Limit: ${response.headers.get('X-RateLimit-Remaining')} remaining`;
-                
-            } catch (error) {
-                console.error('Error fetching repos:', error);
-                showAlert('Failed to fetch repositories: ' + error.message, 'error');
-            } finally {
-                loading.style.display = 'none';
-                repoSelect.disabled = false;
-            }
-        }
-        
-        function onRepoSelect() {
-            const repoSelect = document.getElementById('repoSelect');
-            const repoInfo = document.getElementById('repoInfo');
-            
-            if (repoSelect.value) {
-                repoInfo.innerHTML = `✅ Selected: ${repoSelect.value}<br>📄 Config will be saved to: ${document.getElementById('configPath').value}`;
-            } else {
-                repoInfo.innerHTML = '';
-            }
-        }
-
-        // Refresh system health
-        async function refreshHealth() {
-            const healthGrid = document.getElementById('healthGrid');
-            healthGrid.innerHTML = '<div style="text-align:center; grid-column:1/-1;"><span class="loading"></span> Checking system status...</div>';
-            
-            const healthStatuses = {
-                github: await checkGitHubHealth(),
-                telegram: await checkTelegramHealth(),
-                mikrotik: await checkMikrotikHealth(),
-                olt: await checkOLTHealth()
-            };
-            
-            healthGrid.innerHTML = `
-                <div class="health-card">
-                    <h4>🐙 GitHub API</h4>
-                    <div class="status-indicator">
-                        <span class="status-dot ${healthStatuses.github.online ? 'online' : 'offline'}"></span>
-                        <span class="status-text ${healthStatuses.github.online ? 'online' : 'offline'}">
-                            ${healthStatuses.github.online ? '● Online' : '● Offline'}
-                        </span>
-                    </div>
-                    <div class="health-details">
-                        ${healthStatuses.github.details || 'Checking...'}
-                    </div>
-                </div>
-                <div class="health-card">
-                    <h4>🤖 Telegram Bot</h4>
-                    <div class="status-indicator">
-                        <span class="status-dot ${healthStatuses.telegram.online ? 'online' : 'offline'}"></span>
-                        <span class="status-text ${healthStatuses.telegram.online ? 'online' : 'offline'}">
-                            ${healthStatuses.telegram.online ? '● Online' : '● Offline'}
-                        </span>
-                    </div>
-                    <div class="health-details">
-                        ${healthStatuses.telegram.details || 'Checking...'}
-                    </div>
-                </div>
-                <div class="health-card">
-                    <h4>🖥️ MikroTik Router</h4>
-                    <div class="status-indicator">
-                        <span class="status-dot ${healthStatuses.mikrotik.online ? 'online' : 'offline'}"></span>
-                        <span class="status-text ${healthStatuses.mikrotik.online ? 'online' : 'offline'}">
-                            ${healthStatuses.mikrotik.online ? '● Online' : '● Offline'}
-                        </span>
-                    </div>
-                    <div class="health-details">
-                        ${healthStatuses.mikrotik.details || 'Not configured'}
-                    </div>
-                </div>
-                <div class="health-card">
-                    <h4>🔌 OLT (SNMP)</h4>
-                    <div class="status-indicator">
-                        <span class="status-dot ${healthStatuses.olt.online ? 'online' : 'offline'}"></span>
-                        <span class="status-text ${healthStatuses.olt.online ? 'online' : 'offline'}">
-                            ${healthStatuses.olt.online ? '● Online' : '● Offline'}
-                        </span>
-                    </div>
-                    <div class="health-details">
-                        ${healthStatuses.olt.details || 'Not configured'}
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Check GitHub health
-        async function checkGitHubHealth() {
-            try {
-                const token = currentConfig.github?.token;
-                if (!token) {
-                    return { online: false, details: 'No token configured' };
-                }
-                
-                const response = await fetch('https://api.github.com/rate_limit', {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const remaining = data.rate.remaining;
-                    return { 
-                        online: true, 
-                        details: `✅ API accessible<br>📊 Rate limit: ${remaining}/5000 remaining<br>🕐 Resets: ${new Date(data.rate.reset * 1000).toLocaleTimeString()}` 
-                    };
-                }
-                return { online: false, details: 'API returned error' };
-            } catch (error) {
-                return { online: false, details: `Connection failed: ${error.message}` };
-            }
-        }
-        
-        // Check Telegram health
-        async function checkTelegramHealth() {
-            try {
-                const token = currentConfig.telegram?.token;
-                if (!token) {
-                    return { online: false, details: 'No token configured' };
-                }
-                
-                const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-                if (response.ok) {
-                    const data = await response.json();
-                    return { 
-                        online: true, 
-                        details: `✅ Bot: @${data.result.username}<br>🆔 ID: ${data.result.id}<br>📱 Status: Active` 
-                    };
-                }
-                return { online: false, details: 'Invalid token or bot not found' };
-            } catch (error) {
-                return { online: false, details: `Connection failed: ${error.message}` };
-            }
-        }
-        
-        // Check MikroTik health (simulated - would need backend API)
-        async function checkMikrotikHealth() {
-            const config = currentConfig.mikrotik;
-            if (!config.ip || !config.user) {
-                return { online: false, details: 'Not configured' };
-            }
-            
-            // Simulated check - in production, this would call a backend API
-            return { 
-                online: false, 
-                details: `📍 IP: ${config.ip}:${config.port}<br>👤 User: ${config.user}<br>⚠️ Backend API required for real-time status` 
-            };
-        }
-        
-        // Check OLT health (simulated - would need SNMP backend)
-        async function checkOLTHealth() {
-            const config = currentConfig.olt;
-            if (!config.ip) {
-                return { online: false, details: 'Not configured' };
-            }
-            
-            // Simulated check - in production, this would call a backend API
-            return { 
-                online: false, 
-                details: `📍 IP: ${config.ip}:${config.port}<br>🔑 Community: ${config.community}<br>📡 Version: ${config.version}<br>⚠️ Backend API required for real-time status` 
-            };
-        }
-        
-        // Test functions
-        async function testTelegram() {
-            const token = document.getElementById('telegramToken').value;
-            if (!token) {
-                showAlert('Please enter Telegram bot token', 'error');
-                return;
-            }
-            
-            const statusDiv = document.getElementById('telegramStatus');
-            statusDiv.innerHTML = '<span class="loading"></span> Testing...';
-            
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-                if (response.ok) {
-                    const data = await response.json();
-                    statusDiv.innerHTML = `
-                        <span class="status-dot online"></span>
-                        <span class="status-text online">✅ Connected: @${data.result.username}</span>
-                    `;
-                    showAlert('Telegram bot connection successful!', 'success');
-                } else {
-                    throw new Error('Invalid token');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = `
-                    <span class="status-dot offline"></span>
-                    <span class="status-text offline">❌ Connection failed</span>
-                `;
-                showAlert('Failed to connect to Telegram bot', 'error');
-            }
-        }
-        
-        async function testMikrotik() {
-            const ip = document.getElementById('mikrotikIp').value;
-            const user = document.getElementById('mikrotikUser').value;
-            const pass = document.getElementById('mikrotikPass').value;
-            
-            if (!ip || !user) {
-                showAlert('Please enter MikroTik IP and username', 'error');
-                return;
-            }
-            
-            const statusDiv = document.getElementById('mikrotikStatus');
-            statusDiv.innerHTML = '<span class="loading"></span> Testing...';
-            
-            // Simulated test - in production, would call backend API
-            setTimeout(() => {
-                statusDiv.innerHTML = `
-                    <span class="status-dot offline"></span>
-                    <span class="status-text offline">⚠️ Backend API required for testing</span>
-                `;
-                showAlert('MikroTik testing requires backend API integration', 'info');
-            }, 1000);
-        }
-        
-        async function testOLT() {
-            const ip = document.getElementById('oltIp').value;
-            const community = document.getElementById('oltCommunity').value;
-            
-            if (!ip) {
-                showAlert('Please enter OLT IP address', 'error');
-                return;
-            }
-            
-            const statusDiv = document.getElementById('oltStatus');
-            statusDiv.innerHTML = '<span class="loading"></span> Testing...';
-            
-            // Simulated test - in production, would call backend API with SNMP
-            setTimeout(() => {
-                statusDiv.innerHTML = `
-                    <span class="status-dot offline"></span>
-                    <span class="status-text offline">⚠️ Backend API required for SNMP testing</span>
-                `;
-                showAlert('OLT SNMP testing requires backend API integration', 'info');
-            }, 1000);
-        }
-        
-        async function testGitHub() {
-            const token = document.getElementById('githubToken').value;
-            if (!token) {
-                showAlert('Please enter GitHub token', 'error');
-                return;
-            }
-            
-            const statusDiv = document.getElementById('githubStatus');
-            statusDiv.innerHTML = '<span class="loading"></span> Testing...';
-            
-            try {
-                const response = await fetch('https://api.github.com/user', {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    statusDiv.innerHTML = `
-                        <span class="status-dot online"></span>
-                        <span class="status-text online">✅ Connected: ${data.login}</span>
-                    `;
-                    showAlert('GitHub connection successful!', 'success');
-                    fetchRepos(); // Auto-fetch repos on successful test
-                } else {
-                    throw new Error('Invalid token');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = `
-                    <span class="status-dot offline"></span>
-                    <span class="status-text offline">❌ Connection failed</span>
-                `;
-                showAlert('Failed to connect to GitHub', 'error');
-            }
-        }
-        
-        // Show alert message
-        function showAlert(message, type = 'info') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} show`;
-            alert.innerHTML = message;
-            
-            alertContainer.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.classList.remove('show');
-                setTimeout(() => alert.remove(), 300);
-            }, 5000);
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/encryption.js"></script>
+    <script src="js/github-storage.js"></script>
+    <script src="js/system-health.js"></script>
 </body>
-    </html>
+</html>
