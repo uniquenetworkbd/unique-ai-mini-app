@@ -1,22 +1,29 @@
 {
   "brain_version": "1.0.0-Nano",
-  "ai_sensitivity": 0.85,
-  "learning_mode": true,
-  "default_responses": {
-    "unknown": "দুঃখিত, আমি এটি বুঝতে পারিনি। আমাদের হেল্পলাইনে কল করুন: 01xxxxxxxxx",
-    "maintenance": "বর্তমানে আমাদের এলাকায় ফাইবার অপটিক লাইনে কাজ চলছে। দ্রুত সমাধান হবে।"
-  },
+  "ai_sensitivity": 0.75,
   "knowledge_base": [
     {
-      "pattern": ["ইন্টারনেট", "স্লো", "গতি কম"],
-      "response": "আপনার রাউটারটি একবার রিস্টার্ট দিয়ে দেখুন। সমস্যা সমাধান না হলে জানান।",
-      "action": "check_latency"
+      "pattern": ["internet", "slow", "speed", "buffering"],
+      "response": "🔧 <b>Internet Speed Issues</b>\n\nTo improve your internet speed:\n1️⃣ Restart your router (wait 30 seconds)\n2️⃣ Check all cable connections\n3️⃣ Run speed test at speedtest.net\n4️⃣ Reduce connected devices\n\nIf problem persists, contact support."
     },
     {
-      "pattern": ["বিল", "পেমেন্ট", "বিকাশ"],
-      "response": "আপনি বিকাশ অ্যাপের মাধ্যমে 'Unique Network' সিলেক্ট করে বিল দিতে পারবেন।",
-      "action": "show_payment_methods"
+      "pattern": ["wifi", "password", "ssid", "connect"],
+      "response": "🔐 <b>WiFi Information</b>\n\nDefault credentials:\n• SSID: UniqueNetwork_XXXX\n• Password: unique@123\n\nTo change WiFi password:\n1. Open browser\n2. Type 192.168.1.1\n3. Login: admin/admin\n4. Go to Wireless Settings"
+    },
+    {
+      "pattern": ["bill", "payment", "pay", "due", "invoice"],
+      "response": "💳 <b>Payment & Billing</b>\n\nPay your bill:\n📱 App: Download 'Unique Network' from Play Store\n💻 Web: unique-network.com/pay\n🏧 bKash: 123456 (Reference: Bill ID)\n\nDue date: 10th of every month\nLate fee: 50 BDT/day"
+    },
+    {
+      "pattern": ["support", "agent", "human", "talk", "speak"],
+      "response": "👨‍💻 <b>Customer Support</b>\n\nReach us:\n📞 Hotline: 1234567890 (9 AM - 9 PM)\n💬 Live Chat: unique-network.com\n📧 Email: support@unique-network.com\n📍 Office: 123 Gulshan Avenue, Dhaka"
+    },
+    {
+      "pattern": ["package", "plan", "price", "cost", "monthly"],
+      "response": "📦 <b>Internet Packages</b>\n\n• Basic: 20 Mbps - 1200 BDT\n• Standard: 50 Mbps - 1800 BDT\n• Premium: 100 Mbps - 2500 BDT\n• Ultra: 200 Mbps - 4000 BDT\n\nAll packages include:\n✅ Unlimited data\n✅ 24/7 support\n✅ Free installation"
     }
   ],
-  "banned_keywords": ["হ্যাক", "খারাপ শব্দ", "অপ্রাসঙ্গিক"]
+  "default_responses": {
+    "unknown": "🤔 I'm not sure I understand. Please try rephrasing or contact our support team at 1234567890 for immediate assistance."
+  }
 }
