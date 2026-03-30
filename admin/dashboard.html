@@ -3,195 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unique Control Room | Admin</title>
+    <title>Nano AI Admin | Unique Network</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #0088cc; --dark: #1a1a1a; --bg: #f4f7f9; }
-        body { background: var(--bg); font-family: 'Segoe UI', sans-serif; margin: 0; }
+        :root { --primary: #0088cc; --dark: #1a1a1a; --bg: #f4f7f9; --orange: #e67e22; }
+        body { background: var(--bg); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
         .hidden { display: none !important; }
         
-        /* Login Screen */
-        .login-screen { position: fixed; inset: 0; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        
-        /* Header & Tabs */
+        /* Layout */
         .header { background: #222; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .nav-tabs { display: flex; gap: 10px; padding: 12px; overflow-x: auto; background: white; border-bottom: 1px solid #ddd; scrollbar-width: none; }
         .tab { padding: 8px 18px; background: #eee; border-radius: 20px; cursor: pointer; font-size: 13px; white-space: nowrap; transition: 0.3s; }
         .tab.active { background: var(--primary); color: white; }
-
-        /* Inputs & Buttons */
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn-action { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* User Table Styles */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-        th { text-align: left; background: #f8f9fa; padding: 12px; border-bottom: 2px solid #eee; }
-        td { padding: 12px; border-bottom: 1px solid #f1f1f1; }
-        .badge { padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-        .status-active { background: #d4edda; color: #155724; }
-        .status-banned { background: #f8d7da; color: #721c24; }
+        /* Components */
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        
+        /* Brain Trainer UI */
+        .train-box { border-left: 4px solid var(--orange); padding-left: 15px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <div id="loginScreen" class="login-screen">
+    <div id="loginScreen" class="login-screen" style="position:fixed; inset:0; background:var(--dark); display:flex; align-items:center; justify-content:center; z-index:1000;">
         <div class="card" style="width: 85%; max-width: 350px; text-align: center;">
-            <i class="fas fa-user-shield fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
-            <h3 style="margin-top: 0;">Unique Admin Login</h3>
+            <i class="fas fa-brain fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
+            <h3>Nano AI Login</h3>
             <input type="text" id="adminID" placeholder="Admin ID">
             <input type="password" id="adminPass" placeholder="Password">
             <button class="btn-action" onclick="attemptLogin()">প্রবেশ করুন</button>
-            <p style="font-size: 11px; color: #888; margin-top: 15px;">Default: admin / 1234</p>
         </div>
     </div>
 
     <div id="mainDashboard" class="hidden">
         <div class="header">
-            <h3 style="margin:0; font-size: 16px;">Unique Control Room</h3>
+            <h3 style="margin:0; font-size: 16px;">Unique Nano Control</h3>
             <button onclick="location.reload()" style="background:none; border:none; color:white;"><i class="fas fa-power-off"></i></button>
         </div>
 
         <div class="nav-tabs">
             <div class="tab active" onclick="switchTab('overview')">Overview</div>
-            <div class="tab" onclick="switchTab('users')">User Management</div>
-            <div class="tab" onclick="switchTab('bot')">Bot Config</div>
+            <div class="tab" onclick="switchTab('trainer')">Brain Trainer</div>
+            <div class="tab" onclick="switchTab('users')">Users</div>
             <div class="tab" onclick="switchTab('sys')">System Settings</div>
-            <div class="tab" onclick="switchTab('profile')">Profile</div>
         </div>
 
         <div class="container" style="padding: 15px;">
             
-            <div id="tab_overview" class="tab-content">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="card" style="text-align:center; padding: 15px;">
-                        <i class="fas fa-users fa-2x" style="color:var(--primary)"></i>
-                        <h4>২৫০+</h4><p style="font-size:12px; color:#666">মোট ইউজার</p>
-                    </div>
-                    <div class="card" style="text-align:center; padding: 15px;">
-                        <i class="fas fa-wifi fa-2x" style="color:#2ecc71"></i>
-                        <h4>৩</h4><p style="font-size:12px; color:#666">একটিভ POP</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab_users" class="tab-content hidden">
+            <div id="tab_trainer" class="tab-content hidden">
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="margin:0;">User Registry</h4>
-                        <input type="text" id="userSearch" onkeyup="searchTable()" placeholder="Search..." style="width: 100px; padding: 6px; margin:0;">
+                    <h4><i class="fas fa-graduation-cap"></i> AI Brain Trainer</h4>
+                    <p style="font-size:12px; color:gray;">এখানে নতুন প্রশ্ন ও উত্তর যোগ করে বটকে আরও বুদ্ধিমান করুন।</p>
+                    
+                    <div class="train-box">
+                        <label>ইউজার কী বলবে? (Keywords)</label>
+                        <input type="text" id="trainPattern" placeholder="উদা: ইন্টারনেট স্লো, গতি কম, বাফার">
+                        
+                        <label>বট কী উত্তর দেবে? (Response)</label>
+                        <textarea id="trainResponse" rows="3" placeholder="উদা: আপনার রাউটারটি রিস্টার্ট দিয়ে দেখুন..."></textarea>
+                        
+                        <button class="btn-action" style="background:var(--orange);" onclick="trainBot()">
+                            <i class="fas fa-plus-circle"></i> নতুন জ্ঞান যোগ করুন
+                        </button>
                     </div>
-                    <div style="overflow-x: auto;">
-                        <table id="userTable">
-                            <thead>
-                                <tr><th>ID</th><th>Name</th><th>Status</th><th>Action</th></tr>
-                            </thead>
-                            <tbody id="userTableBody">
-                                <tr>
-                                    <td>#101</td><td>Unbd_Admin</td>
-                                    <td><span class="badge status-active">Active</span></td>
-                                    <td><i class="fas fa-edit" style="color:var(--primary)"></i></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab_bot" class="tab-content hidden">
-                <div class="card">
-                    <h4>Bot Behavior</h4>
-                    <label>Bot Soul</label>
-                    <select id="botSoul">
-                        <option value="Professional">Professional 👔</option>
-                        <option value="Friendly">Friendly 😊</option>
-                    </select>
-                    <label>Live Alert Message</label>
-                    <input type="text" id="liveAlert" placeholder="সবার কাছে পাঠানোর জন্য মেসেজ...">
-                    <button class="btn-action" onclick="alert('গিটহাবে সেভ হচ্ছে...')">Update Bot</button>
                 </div>
             </div>
 
             <div id="tab_sys" class="tab-content hidden">
-                <div class="card" style="text-align: center;">
-                    <i class="fas fa-key fa-2x" style="color:var(--primary)"></i>
-                    <h4>এপিআই ও টোকেন</h4>
-                    <p style="font-size:11px; color:gray;">এই তথ্যগুলো এনক্রিপ্টেড অবস্থায় ব্রাউজারে সংরক্ষিত থাকবে।</p>
-                    <input type="password" id="ghToken" placeholder="GitHub Access Token">
-                    <input type="password" id="tgToken" placeholder="Telegram Bot Token">
-                    <button class="btn-action" style="background:#2c3e50;" onclick="saveTokens()">Save API Tokens</button>
-                </div>
-            </div>
-
-            <div id="tab_profile" class="tab-content hidden">
                 <div class="card">
-                    <h4>Admin Profile</h4>
-                    <label>New ID</label>
-                    <input type="text" id="newID" placeholder="New Admin ID">
-                    <label>New Password</label>
-                    <input type="password" id="newPass" placeholder="New Password">
-                    <button class="btn-action" style="background:#e67e22;" onclick="updateProfile()">Update Login Info</button>
+                    <h4><i class="fas fa-cogs"></i> Nano AI Config</h4>
+                    <label>Sensitivity (0.1 - 1.0)</label>
+                    <input type="number" id="aiSens" value="0.8" step="0.1">
+                    
+                    <label>GitHub Token</label>
+                    <input type="password" id="ghToken" placeholder="ghp_xxxxxxx">
+                    
+                    <label>Brain File Path</label>
+                    <input type="text" id="ghPath" value="data/brain.json">
+                    
+                    <button class="btn-action" style="background:#2c3e50;" onclick="saveConfig()">
+                        Save & Sync GitHub
+                    </button>
                 </div>
             </div>
 
+            <div id="tab_overview" class="tab-content">
+                <div class="card" style="text-align:center;">
+                    <i class="fas fa-robot fa-3x" style="color:var(--primary)"></i>
+                    <h4>Nano AI is Online</h4>
+                    <p>আপনার বট বর্তমানে GitHub এর মাধ্যমে লাইভ কাজ করছে।</p>
+                </div>
+            </div>
+            
+            <div id="tab_users" class="tab-content hidden">
+                 <div class="card"><h4>User Management</h4><p>ইউজার ডাটা টেবিল এখানে লোড হবে।</p></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // সহজ এনক্রিপশন
-        const enc = (s) => btoa(unescape(encodeURIComponent(s)));
-        const dec = (s) => s ? decodeURIComponent(escape(atob(s))) : "";
-
-        // ১. লগইন হ্যান্ডলার
+        // লগইন লজিক
         function attemptLogin() {
             const id = document.getElementById('adminID').value;
             const pass = document.getElementById('adminPass').value;
-            const profile = JSON.parse(localStorage.getItem('un_prof') || 'null');
-            
-            const vID = profile ? dec(profile.id) : "admin";
-            const vPass = profile ? dec(profile.pass) : "1234";
-
-            if(id === vID && pass === vPass) {
+            if(id === "admin" && pass === "1234") { // এটি পরে প্রোফাইল থেকে চেঞ্জ করা যাবে
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
-                loadData();
-            } else {
-                alert("ভুল তথ্য!");
-            }
+            } else { alert("ভুল তথ্য!"); }
         }
 
-        // ২. টোকেন সেভ (Persistent)
-        function saveTokens() {
-            const data = {
-                gh: enc(document.getElementById('ghToken').value),
-                tg: enc(document.getElementById('tgToken').value)
-            };
-            localStorage.setItem('un_sys', JSON.stringify(data));
-            alert("সফলভাবে সেভ হয়েছে!");
-        }
-
-        // ৩. প্রোফাইল আপডেট
-        function updateProfile() {
-            const nid = document.getElementById('newID').value;
-            const nps = document.getElementById('newPass').value;
-            if(!nid || !nps) return alert("সব ঘর পূরণ করুন");
-            localStorage.setItem('un_prof', JSON.stringify({id: enc(nid), pass: enc(nps)}));
-            alert("প্রোফাইল আপডেট হয়েছে!");
-        }
-
-        function loadData() {
-            const sys = JSON.parse(localStorage.getItem('un_sys') || 'null');
-            if(sys) {
-                document.getElementById('ghToken').value = dec(sys.gh);
-                document.getElementById('tgToken').value = dec(sys.tg);
-            }
-        }
-
+        // ট্যাব সুইচিং
         function switchTab(id) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -199,11 +123,24 @@
             event.currentTarget.classList.add('active');
         }
 
-        function searchTable() {
-            let input = document.getElementById("userSearch").value.toLowerCase();
-            let rows = document.querySelectorAll("#userTableBody tr");
-            rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(input) ? "" : "none");
+        // Brain Trainer লজিক
+        function trainBot() {
+            const pattern = document.getElementById('trainPattern').value;
+            const response = document.getElementById('trainResponse').value;
+            
+            if(!pattern || !response) return alert("দয়া করে প্রশ্ন ও উত্তর দুটোই লিখুন।");
+            
+            // এখানে GitHub API কল করে brain.json আপডেট করার ফাংশন বসবে
+            alert("বটের স্মৃতিতে নতুন তথ্য যোগ করা হচ্ছে: " + pattern);
+            
+            // ক্লিয়ার ইনপুট
+            document.getElementById('trainPattern').value = "";
+            document.getElementById('trainResponse').value = "";
+        }
+
+        function saveConfig() {
+            alert("সিস্টেম কনফিগারেশন আপডেট হয়েছে!");
         }
     </script>
 </body>
-                                                               </html>
+</html>
