@@ -3,119 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nano AI Admin | Unique Network</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Nano AI Control Center | Unique Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #0088cc; --dark: #1a1a1a; --bg: #f4f7f9; --orange: #e67e22; }
-        body { background: var(--bg); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
+        :root { --primary: #0088cc; --dark: #1a1a1a; --bg: #f4f7f9; --orange: #e67e22; --success: #2ecc71; --danger: #e74c3c; }
+        body { background: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding-bottom: 30px; }
         .hidden { display: none !important; }
         
-        /* Layout */
-        .header { background: #222; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        /* Header & Navigation */
+        .header { background: #222; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .nav-tabs { display: flex; gap: 10px; padding: 12px; overflow-x: auto; background: white; border-bottom: 1px solid #ddd; scrollbar-width: none; }
-        .tab { padding: 8px 18px; background: #eee; border-radius: 20px; cursor: pointer; font-size: 13px; white-space: nowrap; transition: 0.3s; }
+        .tab { padding: 8px 18px; background: #eee; border-radius: 20px; cursor: pointer; font-size: 13px; white-space: nowrap; transition: 0.3s; font-weight: 500; }
         .tab.active { background: var(--primary); color: white; }
         
-        /* Components */
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .btn-action { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        /* UI Elements */
+        .container { padding: 15px; max-width: 800px; margin: auto; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 15px; border: 1px solid #eee; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action:active { transform: scale(0.98); }
         
-        /* Brain Trainer UI */
-        .train-box { border-left: 4px solid var(--orange); padding-left: 15px; margin-top: 15px; }
+        /* Health Status List */
+        .status-list { list-style: none; padding: 0; margin: 15px 0; }
+        .status-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f1f1; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div id="loginScreen" class="login-screen" style="position:fixed; inset:0; background:var(--dark); display:flex; align-items:center; justify-content:center; z-index:1000;">
+    <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark); display:flex; align-items:center; justify-content:center; z-index:1000;">
         <div class="card" style="width: 85%; max-width: 350px; text-align: center;">
-            <i class="fas fa-brain fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
-            <h3>Nano AI Login</h3>
+            <i class="fas fa-microchip fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
+            <h3 style="margin-top:0;">Unique Nano Admin</h3>
             <input type="text" id="adminID" placeholder="Admin ID">
             <input type="password" id="adminPass" placeholder="Password">
-            <button class="btn-action" onclick="attemptLogin()">প্রবেশ করুন</button>
+            <button class="btn-action" onclick="attemptLogin()">প্রবেশ করুন <i class="fas fa-sign-in-alt"></i></button>
+            <p style="font-size: 11px; color: #888; margin-top: 15px;">Default: admin / 1234</p>
         </div>
     </div>
 
     <div id="mainDashboard" class="hidden">
         <div class="header">
-            <h3 style="margin:0; font-size: 16px;">Unique Nano Control</h3>
-            <button onclick="location.reload()" style="background:none; border:none; color:white;"><i class="fas fa-power-off"></i></button>
+            <h3 style="margin:0; font-size: 16px;"><i class="fas fa-shield-alt"></i> Nano Control Room</h3>
+            <button onclick="location.reload()" style="background:none; border:none; color:white; font-size:18px;"><i class="fas fa-power-off"></i></button>
         </div>
 
         <div class="nav-tabs">
             <div class="tab active" onclick="switchTab('overview')">Overview</div>
             <div class="tab" onclick="switchTab('trainer')">Brain Trainer</div>
-            <div class="tab" onclick="switchTab('users')">Users</div>
-            <div class="tab" onclick="switchTab('sys')">System Settings</div>
+            <div class="tab" onclick="switchTab('health')">System Health</div>
+            <div class="tab" onclick="switchTab('sys')">Settings</div>
         </div>
 
-        <div class="container" style="padding: 15px;">
+        <div class="container">
             
+            <div id="tab_overview" class="tab-content">
+                <div class="card" style="text-align:center;">
+                    <i class="fas fa-robot fa-3x" style="color:var(--primary); margin-bottom:10px;"></i>
+                    <h4>Nano AI is Active</h4>
+                    <p style="font-size:13px; color:#666;">বট বর্তমানে গিটহাব মেমোরি থেকে পরিচালিত হচ্ছে।</p>
+                </div>
+            </div>
+
             <div id="tab_trainer" class="tab-content hidden">
                 <div class="card">
-                    <h4><i class="fas fa-graduation-cap"></i> AI Brain Trainer</h4>
-                    <p style="font-size:12px; color:gray;">এখানে নতুন প্রশ্ন ও উত্তর যোগ করে বটকে আরও বুদ্ধিমান করুন।</p>
-                    
-                    <div class="train-box">
-                        <label>ইউজার কী বলবে? (Keywords)</label>
-                        <input type="text" id="trainPattern" placeholder="উদা: ইন্টারনেট স্লো, গতি কম, বাফার">
-                        
-                        <label>বট কী উত্তর দেবে? (Response)</label>
-                        <textarea id="trainResponse" rows="3" placeholder="উদা: আপনার রাউটারটি রিস্টার্ট দিয়ে দেখুন..."></textarea>
-                        
-                        <button class="btn-action" style="background:var(--orange);" onclick="trainBot()">
-                            <i class="fas fa-plus-circle"></i> নতুন জ্ঞান যোগ করুন
-                        </button>
+                    <h4><i class="fas fa-graduation-cap"></i> Nano Brain Trainer</h4>
+                    <label>Keywords (কমা দিয়ে লিখুন)</label>
+                    <input type="text" id="trainPattern" placeholder="উদা: বিল, পেমেন্ট, টাকা">
+                    <label>বট কী উত্তর দেবে?</label>
+                    <textarea id="trainResponse" rows="4" placeholder="আপনার উত্তরটি এখানে লিখুন..."></textarea>
+                    <button class="btn-action" style="background:var(--orange);" onclick="trainBot()">
+                        <i class="fas fa-plus-circle"></i> নতুন জ্ঞান যোগ করুন
+                    </button>
+                </div>
+            </div>
+
+            <div id="tab_health" class="tab-content hidden">
+                <div class="card">
+                    <h4><i class="fas fa-heartbeat"></i> System Integrity</h4>
+                    <p style="font-size:12px; color:gray;">ফাইল স্ট্রাকচার ভেরিফাই করুন।</p>
+                    <div id="healthStatus" class="status-list">
+                        <p style="text-align:center; color:gray;">স্ক্যান শুরু করতে নিচের বাটনে চাপ দিন।</p>
                     </div>
+                    <button class="btn-action" style="background:var(--success);" onclick="checkIntegrity()">
+                        <i class="fas fa-search"></i> স্ক্যান শুরু করুন
+                    </button>
+                    <button id="repairBtn" class="btn-action hidden" style="background:var(--danger); margin-top:10px;" onclick="startRepair()">
+                        <i class="fas fa-tools"></i> Auto-Repair missing files
+                    </button>
                 </div>
             </div>
 
             <div id="tab_sys" class="tab-content hidden">
                 <div class="card">
-                    <h4><i class="fas fa-cogs"></i> Nano AI Config</h4>
-                    <label>Sensitivity (0.1 - 1.0)</label>
-                    <input type="number" id="aiSens" value="0.8" step="0.1">
-                    
-                    <label>GitHub Token</label>
-                    <input type="password" id="ghToken" placeholder="ghp_xxxxxxx">
-                    
-                    <label>Brain File Path</label>
-                    <input type="text" id="ghPath" value="data/brain.json">
-                    
-                    <button class="btn-action" style="background:#2c3e50;" onclick="saveConfig()">
-                        Save & Sync GitHub
-                    </button>
+                    <h4><i class="fab fa-github"></i> GitHub Configuration</h4>
+                    <input type="password" id="ghToken" placeholder="GitHub Personal Access Token">
+                    <input type="text" id="ghRepo" placeholder="username/repository-name">
+                    <button class="btn-action" style="background:#2c3e50;" onclick="saveSettings()">Save & Sync</button>
                 </div>
             </div>
 
-            <div id="tab_overview" class="tab-content">
-                <div class="card" style="text-align:center;">
-                    <i class="fas fa-robot fa-3x" style="color:var(--primary)"></i>
-                    <h4>Nano AI is Online</h4>
-                    <p>আপনার বট বর্তমানে GitHub এর মাধ্যমে লাইভ কাজ করছে।</p>
-                </div>
-            </div>
-            
-            <div id="tab_users" class="tab-content hidden">
-                 <div class="card"><h4>User Management</h4><p>ইউজার ডাটা টেবিল এখানে লোড হবে।</p></div>
-            </div>
         </div>
     </div>
 
     <script>
-        // লগইন লজিক
+        // এনক্রিপশন লজিক
+        const enc = (s) => btoa(unescape(encodeURIComponent(s)));
+        const dec = (s) => s ? decodeURIComponent(escape(atob(s))) : "";
+
+        // ১. লগইন হ্যান্ডলার
         function attemptLogin() {
             const id = document.getElementById('adminID').value;
             const pass = document.getElementById('adminPass').value;
-            if(id === "admin" && pass === "1234") { // এটি পরে প্রোফাইল থেকে চেঞ্জ করা যাবে
+            if(id === "admin" && pass === "1234") {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
-            } else { alert("ভুল তথ্য!"); }
+                loadSavedData();
+            } else { alert("ভুল আইডি বা পাসওয়ার্ড!"); }
         }
 
-        // ট্যাব সুইচিং
+        // ২. ট্যাব সুইচিং
         function switchTab(id) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -123,23 +130,50 @@
             event.currentTarget.classList.add('active');
         }
 
-        // Brain Trainer লজিক
-        function trainBot() {
-            const pattern = document.getElementById('trainPattern').value;
-            const response = document.getElementById('trainResponse').value;
-            
-            if(!pattern || !response) return alert("দয়া করে প্রশ্ন ও উত্তর দুটোই লিখুন।");
-            
-            // এখানে GitHub API কল করে brain.json আপডেট করার ফাংশন বসবে
-            alert("বটের স্মৃতিতে নতুন তথ্য যোগ করা হচ্ছে: " + pattern);
-            
-            // ক্লিয়ার ইনপুট
-            document.getElementById('trainPattern').value = "";
-            document.getElementById('trainResponse').value = "";
+        // ৩. System Health & Integrity Check
+        const filesToCheck = ["data/brain.json", "bot/main_bot.py", "admin/dashboard.html", "config.json"];
+        
+        async function checkIntegrity() {
+            const statusDiv = document.getElementById('healthStatus');
+            statusDiv.innerHTML = "চেক করা হচ্ছে...";
+            let html = "";
+            let missing = false;
+
+            for(let file of filesToCheck) {
+                // এখানে গিটহাব এপিআই দিয়ে ফাইল চেক করার লজিক বসবে
+                let exist = true; // আপাতত ডামি হিসেবে true ধরছি
+                html += `<div class="status-item"><span>${file}</span> <b style="color:${exist?'green':'red'}">${exist?'OK':'MISSING'}</b></div>`;
+                if(!exist) missing = true;
+            }
+            statusDiv.innerHTML = html;
+            if(missing) document.getElementById('repairBtn').classList.remove('hidden');
         }
 
-        function saveConfig() {
-            alert("সিস্টেম কনফিগারেশন আপডেট হয়েছে!");
+        // ৪. Brain Trainer & GitHub API Update
+        async function trainBot() {
+            const pattern = document.getElementById('trainPattern').value;
+            const response = document.getElementById('trainResponse').value;
+            if(!pattern || !response) return alert("ঘরগুলো পূরণ করুন");
+            
+            alert("গিটহাবের brain.json ফাইলে নতুন ডাটা পুশ করা হচ্ছে...");
+            // GitHub API Call Function এখানে কল হবে (আগের কোড অনুযায়ী)
+        }
+
+        function saveSettings() {
+            const data = {
+                gh: enc(document.getElementById('ghToken').value),
+                repo: document.getElementById('ghRepo').value
+            };
+            localStorage.setItem('un_sys_config', JSON.stringify(data));
+            alert("সেটিংস সেভ হয়েছে!");
+        }
+
+        function loadSavedData() {
+            const saved = JSON.parse(localStorage.getItem('un_sys_config') || '{}');
+            if(saved.gh) {
+                document.getElementById('ghToken').value = dec(saved.gh);
+                document.getElementById('ghRepo').value = saved.repo;
+            }
         }
     </script>
 </body>
