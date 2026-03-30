@@ -1,0 +1,41 @@
+name: Network Monitor
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r bot/requirements.txt
+    
+    - name: Run network monitor
+      env:
+        CONFIG_PATH: data/config.json
+        STATS_PATH: data/network_stats.json
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPO: ${{ github.repository }}
+      run: |
+        python bot/network_engine.py
+    
+    - name: Upload stats
+      uses: actions/upload-artifact@v3
+      with:
+        name: network-stats
+        path: data/network_stats.json
+        retention-days: 7
