@@ -1,3 +1,5 @@
+Project Structure
+
 unique-nano-ai/
 ├── .github/
 │   └── workflows/
