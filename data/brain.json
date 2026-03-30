@@ -1,0 +1,22 @@
+{
+  "brain_version": "1.0.0-Nano",
+  "ai_sensitivity": 0.85,
+  "learning_mode": true,
+  "default_responses": {
+    "unknown": "দুঃখিত, আমি এটি বুঝতে পারিনি। আমাদের হেল্পলাইনে কল করুন: 01xxxxxxxxx",
+    "maintenance": "বর্তমানে আমাদের এলাকায় ফাইবার অপটিক লাইনে কাজ চলছে। দ্রুত সমাধান হবে।"
+  },
+  "knowledge_base": [
+    {
+      "pattern": ["ইন্টারনেট", "স্লো", "গতি কম"],
+      "response": "আপনার রাউটারটি একবার রিস্টার্ট দিয়ে দেখুন। সমস্যা সমাধান না হলে জানান।",
+      "action": "check_latency"
+    },
+    {
+      "pattern": ["বিল", "পেমেন্ট", "বিকাশ"],
+      "response": "আপনি বিকাশ অ্যাপের মাধ্যমে 'Unique Network' সিলেক্ট করে বিল দিতে পারবেন।",
+      "action": "show_payment_methods"
+    }
+  ],
+  "banned_keywords": ["হ্যাক", "খারাপ শব্দ", "অপ্রাসঙ্গিক"]
+}
