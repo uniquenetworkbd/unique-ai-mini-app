@@ -5,16 +5,24 @@ on:
     # Run every 5 minutes to keep bot alive
     - cron: '*/5 * * * *'
   workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [ main ]
+    paths:
+      - 'bot/**'
+      - 'data/**'
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    timeout-minutes: 5  # Maximum runtime
     
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
     
-    - name: Set up Python 3.x
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
@@ -25,27 +33,31 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Create data directory
+    - name: Setup data directory
       run: |
         mkdir -p data
-        # Create default brain.json if not exists
-        if [ ! -f data/brain.json ]; then
-          echo '{"brain_version": "1.0.0-Nano", "ai_sensitivity": 0.8, "knowledge_base": [], "default_responses": {"unknown": "Sorry, I don\'t understand."}}' > data/brain.json
+        # Create default config if not exists
+        if [ ! -f data/config.json ]; then
+          echo '{"telegram_bot_token": "", "admin_chat_id": ""}' > data/config.json
         fi
     
-    - name: Run Telegram Bot
+    - name: Run bot
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
-        DATA_PATH: data/brain.json
       run: |
-        # Run bot with timeout (max 4 minutes)
-        timeout 240 python bot/main_bot.py || echo "Bot stopped after timeout"
+        # Run bot with timeout
+        python bot/main_bot.py &
+        BOT_PID=$!
+        sleep 240  # Run for 4 minutes
+        kill $BOT_PID 2>/dev/null || true
     
     - name: Upload logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: bot-logs
-        path: bot.log
-        retention-days: 7
+        path: |
+          bot.log
+          data/brain.json
+        retention-days: 3
